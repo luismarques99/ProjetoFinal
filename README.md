@@ -1,4 +1,4 @@
-# Projeto Final
+# :chart_with_upwards_trend: Projeto Final :chart_with_downwards_trend:
 
 Este repositório destina-se ao desenvolvimento do meu **Projeto Final** da **Licenciatura em Engenharia Informática**, realizado na **Escola Superior de Tecnologia e Gestão - P.Porto**.
 

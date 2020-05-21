@@ -1,4 +1,4 @@
-# :chart_with_upwards_trend: Análise de Algoritmos de Aprendizagem - Séries Temporais :chart_with_downwards_trend:
+# :chart_with_upwards_trend: Análise de Algoritmos de Aprendizagem :chart_with_downwards_trend:
 
 Este repositório destina-se ao desenvolvimento do meu **Projeto Final** da **Licenciatura em Engenharia Informática**, realizado na **Escola Superior de Tecnologia e Gestão - P.Porto**.
 

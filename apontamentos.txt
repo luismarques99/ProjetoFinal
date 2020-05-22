@@ -1,0 +1,7 @@
+Componentes de series temporais:
+    1. Nivel - O valor base da serie, se fosse uma linha reta.
+    2. Tendencia - O comportamento, normalmente linear, crescente ou descendente da serie durante o tempo (opcional).
+    3. Sazonalidade - Padroes repetitivos ou ciclos de comportamento durante o tempo (opcional).
+    4. Ruido - Variacoes nas observacoes que nao podem ser explicadas pelo modelo (opcional).
+
+Todas as series temporais tem nivel e a maior parte tem ruido. No entanto, a tendencia e a sazonalidade são opcionais.

@@ -17,5 +17,5 @@ print(f'\nQuery:\n{query}')
 print(f'\nSummary statistics:\n{series.describe()}')
 
 # Show graph
-# pyplot.plot(series)
-# pyplot.show()
+pyplot.plot(series)
+pyplot.show()

@@ -4,12 +4,16 @@ Componentes de series temporais:
     3. Sazonalidade - Padrões repetitivos ou ciclos de comportamento durante o tempo (opcional).
     4. Ruído - Variações nas observações que nao podem ser explicadas pelo modelo (opcional).
 
-Todas as séries temporais tem nível e a maior parte tem ruído. No entanto, a tendência e a sazonalidade são opcionais.
+	Todas as séries temporais tem nível e a maior parte tem ruído. No entanto, a tendência e a sazonalidade são opcionais.
 
 
-Modelo ARIMA:
-	AR: "Autoregression" - Um modelo que usa a relação dependente entre uma observação e um número de observações atrasadas.
-	I: "Integrated" - O uso de diferenciação de observações brutas (por exemplo, retirar uma observação de uma observação no passo anterior) de forma a manter a série temporal estacionária.
-	MA: "Moving Average" - Um modelo que a dependência entre uma observação e o erro residual de um modelo "moving average" (de média móvel) aplicado a observações atrasadas.
+Modelo ARIMA - Autoregressive Integrated Moving Average (Média Móvel Integrada Autoregressiva):
+	AR: "Autoregression" (Auto regressão) - Um modelo que usa a relação dependente entre uma observação e um número de observações atrasadas.
+	I: "Integrated" (Integrado) - O uso de diferenciação de observações brutas (por exemplo, retirar uma observação de uma observação, no passo anterior) de forma a manter a série temporal estacionária.
+	MA: "Moving Average" (Média móvel) - Um modelo que usa a dependência entre uma observação e o erro residual de um modelo de média móvel aplicado a observações atrasadas.
 
-	Cada um destes componentes está especificado no modelo como um parâmetro. 
+	Cada um destes componentes está especificado no modelo como um parâmetro.
+	A notação utilizada é ARIMA(p, d, q):
+		p: Número de observações atrasadas incluídas no modelo - também chamadas de ordem de atraso.
+		d: Número de vezes que observações brutas são diferenciadas - grau de diferenciação.
+		q: Tamanho da janela de media móvel - ordem da média móvel

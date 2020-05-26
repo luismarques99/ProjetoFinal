@@ -1,4 +1,5 @@
 attrs==19.3.0
+autopep8==1.5.2
 backcall==0.1.0
 bleach==3.1.5
 colorama==0.4.3
@@ -33,15 +34,17 @@ pandas==1.0.3
 pandocfilters==1.4.2
 parso==0.7.0
 patsy==0.5.1
+pexpect==4.8.0
 pickleshare==0.7.5
 prometheus-client==0.7.1
 prompt-toolkit==3.0.5
+ptyprocess==0.6.0
+pycodestyle==2.6.0
 Pygments==2.6.1
 pyparsing==2.4.7
 pyrsistent==0.16.0
 python-dateutil==2.8.1
 pytz==2020.1
-pywin32==227
 pywinpty==0.5.7
 pyzmq==19.0.1
 qtconsole==4.7.4

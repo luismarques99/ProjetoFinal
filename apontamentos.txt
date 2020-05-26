@@ -1,7 +1,15 @@
 Componentes de series temporais:
-    1. Nivel - O valor base da serie, se fosse uma linha reta.
-    2. Tendencia - O comportamento, normalmente linear, crescente ou decrescente da serie durante o tempo (opcional).
-    3. Sazonalidade - Padroes repetitivos ou ciclos de comportamento durante o tempo (opcional).
-    4. Ruido - Variacoes nas observacoes que nao podem ser explicadas pelo modelo (opcional).
+    1. Nível - O valor base da série, se fosse uma linha reta.
+    2. Tendência - O comportamento, normalmente linear, crescente ou decrescente da série durante o tempo (opcional).
+    3. Sazonalidade - Padrões repetitivos ou ciclos de comportamento durante o tempo (opcional).
+    4. Ruído - Variações nas observações que nao podem ser explicadas pelo modelo (opcional).
 
-Todas as series temporais tem nivel e a maior parte tem ruido. No entanto, a tendencia e a sazonalidade são opcionais.
+Todas as séries temporais tem nível e a maior parte tem ruído. No entanto, a tendência e a sazonalidade são opcionais.
+
+
+Modelo ARIMA:
+	AR: "Autoregression" - Um modelo que usa a relação dependente entre uma observação e um número de observações atrasadas.
+	I: "Integrated" - O uso de diferenciação de observações brutas (por exemplo, retirar uma observação de uma observação no passo anterior) de forma a manter a série temporal estacionária.
+	MA: "Moving Average" - Um modelo que a dependência entre uma observação e o erro residual de um modelo "moving average" (de média móvel) aplicado a observações atrasadas.
+
+	Cada um destes componentes está especificado no modelo como um parâmetro. 

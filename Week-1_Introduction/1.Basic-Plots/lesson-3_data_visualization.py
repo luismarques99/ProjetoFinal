@@ -6,8 +6,8 @@ from pandas import Grouper
 from pandas import concat
 from matplotlib import pyplot
 
-PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
-os.chdir(PATH)
+# PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
+# os.chdir(PATH)
 
 series = read_csv(os.path.join("files", "shampoo-sales.csv"),
                   header=0, index_col=0, parse_dates=True, squeeze=True)

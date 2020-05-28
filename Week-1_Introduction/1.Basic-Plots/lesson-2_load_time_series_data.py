@@ -6,6 +6,7 @@ from matplotlib import pyplot
 # PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
 # os.chdir(PATH)
 
+
 series = read_csv(join("files", "daily-births.csv"), header=0, index_col=0, parse_dates=True)
 
 # pandas .head() default lines are 5, but it can be passed as an argument [.head(10)]

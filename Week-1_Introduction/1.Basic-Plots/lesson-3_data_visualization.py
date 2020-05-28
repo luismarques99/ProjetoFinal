@@ -9,6 +9,7 @@ from matplotlib import pyplot
 # PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
 # os.chdir(PATH)
 
+
 series = read_csv(os.path.join("files", "shampoo-sales.csv"),
                   header=0, index_col=0, parse_dates=True, squeeze=True)
 series_b = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), header=0, index_col=0, parse_dates=True,

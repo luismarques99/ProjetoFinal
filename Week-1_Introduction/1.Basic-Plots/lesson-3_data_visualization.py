@@ -48,6 +48,8 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 # Tive de fazer com outro dataset, porque o fornecido não traz a data como é esperado (o ano vem definido como
 # ('1', '2', '3'))
 # Vou ter de fazer um groupby especifico para que o dataset shampoo-sales.csv funcione neste tipo de gráficos
+# def parser(x):
+#     return datetime.strptime("190" + x, "%Y-%m")
 
 # Per year
 # groups = series.groupby(Grouper(freq='A'))

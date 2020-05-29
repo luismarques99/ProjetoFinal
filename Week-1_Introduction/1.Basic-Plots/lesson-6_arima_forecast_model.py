@@ -69,4 +69,3 @@ pyplot.plot(train)
 pyplot.plot([None for i in train] + [x for x in test], color="green")
 pyplot.plot([None for i in train] + [x for x in predictions], color="red")
 pyplot.show()
-

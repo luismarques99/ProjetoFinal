@@ -1,26 +1,38 @@
 import os
-import re
 from pandas import read_csv
 from pandas import DataFrame
 from pandas import Grouper
 from pandas import concat
+from pandas import datetime
 from matplotlib import pyplot
 from pandas.plotting import lag_plot
 from pandas.plotting import autocorrelation_plot
 
+'''
+To test any plot, uncomment only the lines of code below the name of it
+'''
+
+
+# In case I use vscode these lines must be uncommented
 # PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
 # os.chdir(PATH)
 
-series_b = read_csv(os.path.join("files", "shampoo-sales.csv"),
-                    header=0, index_col=0, parse_dates=True, squeeze=True)
-series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), header=0, index_col=0, parse_dates=True,
-                  squeeze=True)
+def parser(x):
+    return datetime.strptime(f"190{x}", "%Y-%m")
+
+
+series = read_csv(os.path.join("files", "shampoo-sales.csv"),
+                  header=0,
+                  index_col=0,
+                  parse_dates=[0],
+                  squeeze=True,
+                  date_parser=parser)
 
 # Line plots
 
 # Line plot
-# series.plot()
-# pyplot.show()
+series.plot()
+pyplot.show()
 
 # Black dots plot
 # series.plot(style="k.")
@@ -44,13 +56,6 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 
 # Box and whisker plots
 
-# FIXME:
-# Tive de fazer com outro dataset, porque o fornecido não traz a data como é esperado (o ano vem definido como
-# ('1', '2', '3'))
-# Vou ter de fazer um groupby especifico para que o dataset shampoo-sales.csv funcione neste tipo de gráficos
-# def parser(x):
-#     return datetime.strptime("190" + x, "%Y-%m")
-
 # Per year
 # groups = series.groupby(Grouper(freq='A'))
 # years = DataFrame()
@@ -60,7 +65,7 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 # pyplot.show()
 
 # Per month
-# one_year = series["1990"]
+# one_year = series["1901"]
 # groups = one_year.groupby(Grouper(freq="M"))
 # months = concat([DataFrame(x[1].values) for x in groups], axis=1)
 # months = DataFrame(months)
@@ -70,6 +75,7 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 
 
 # Heat maps
+
 # Per year
 # groups = series.groupby(Grouper(freq="A"))
 # years = DataFrame()
@@ -80,7 +86,7 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 # pyplot.show()
 
 # Per month
-# one_year = series["1990"]
+# one_year = series["1901"]
 # groups = one_year.groupby(Grouper(freq="M"))
 # months = concat([DataFrame(x[1].values) for x in groups], axis=1)
 # months = DataFrame(months)
@@ -90,6 +96,7 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 
 
 # Lag and scatter plots
+
 # Lag plot
 # lag_plot(series)
 # pyplot.show()
@@ -100,19 +107,19 @@ series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), heade
 # columns = [values]
 # for i in range(1, (lags + 1)):
 #     columns.append(values.shift(i))
-# dataframe = concat(columns, axis=1)
+# data_frame = concat(columns, axis=1)
 # columns = ["t+1"]
 # for i in range(1, (lags + 1)):
 #     columns.append(f"t-{i}")
-# dataframe.columns = columns
+# data_frame.columns = columns
 # pyplot.figure(1)
 # for i in range(1, (lags+1)):
 #     ax = pyplot.subplot(240+1)
 #     ax.set_title(f"t+1 vs t-1 {i}")
-#     pyplot.scatter(x=dataframe["t+1"].values, y=dataframe[f"t-{i}"].values)
+#     pyplot.scatter(x=data_frame["t+1"].values, y=data_frame[f"t-{i}"].values)
 #     pyplot.show()
 
 
 # Autocorrelation plot
-autocorrelation_plot(series)
-pyplot.show()
+# autocorrelation_plot(series)
+# pyplot.show()

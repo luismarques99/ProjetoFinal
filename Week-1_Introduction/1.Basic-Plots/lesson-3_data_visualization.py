@@ -8,9 +8,9 @@ from matplotlib import pyplot
 from pandas.plotting import lag_plot
 from pandas.plotting import autocorrelation_plot
 
-'''
+"""
 To test any plot, uncomment only the lines of code below the name of it
-'''
+"""
 
 
 # In case of using vscode these lines must be uncommented

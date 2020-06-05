@@ -13,7 +13,8 @@ To test any plot, uncomment only the lines of code below the name of it
 '''
 
 
-# In case I use vscode these lines must be uncommented
+# In case of using vscode these lines must be uncommented
+# This tells vscode to assume the current working directory is this folder
 # PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
 # os.chdir(PATH)
 

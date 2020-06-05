@@ -5,6 +5,9 @@ from pandas import concat
 from matplotlib import pyplot
 from sklearn.metrics import mean_squared_error
 
+PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
+os.chdir(PATH)
+
 file = os.path.join("files", "daily-births.csv")
 
 series = read_csv(file, header=0, index_col=0, parse_dates=[0], squeeze=True)

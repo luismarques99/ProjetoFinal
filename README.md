@@ -10,6 +10,7 @@ Este projeto tem como objetivo a **análise comparativa de algoritmos de aprend
 
 - [Python](https://www.python.org/) - Linguagem de programação
 - [PyCharm](https://www.jetbrains.com/pycharm/) - IDE para desenvolvimento
+- [VS Code](https://code.visualstudio.com/) - IDE para desenvolvimento
 - [GitHub](https://github.com/) - Controlo de versões
 - [MS Teams](https://teams.microsoft.com/) - Comunicação com o professor orientador
 

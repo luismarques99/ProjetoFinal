@@ -1,0 +1,22 @@
+Local: MS Teams
+Data: 05-06-2020
+Hora inicio: 14h00m
+Hora fim: 14h38m
+Elaborado por: Luís Marques
+
+Participantes:
+	- Luís Marques
+	- Prof. Fábio Silva
+
+
+Assuntos tratados:
+	- Esclarecimentos sobre modelos da semana 1.
+	
+	Tarefas:
+		- Parametrização do modelo ARIMA (dividir em funções).
+		- Estudar modelo ARIMA com:
+			- p entre 1 e 5
+			- d entre 0 e 3
+			- q entre 0 e 3
+		- Guardar dados de estudo num ou mais ficheiros.
+		- Guardar gráficos gerados.

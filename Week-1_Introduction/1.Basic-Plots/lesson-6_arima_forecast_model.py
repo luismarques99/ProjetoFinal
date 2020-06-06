@@ -14,7 +14,8 @@ def parser(x):
     return datetime.strptime(f"190{x}", "%Y-%m")
 
 
-series = read_csv(file, header=0, index_col=0, parse_dates=[0], squeeze=True, date_parser=parser)
+series = read_csv(file, header=0, index_col=0, parse_dates=0,
+                  squeeze=True, date_parser=parser)
 # print(series.head())
 
 # Running this example tells us the time series is not stationary and require differencing to make
@@ -47,15 +48,19 @@ train, test = X[0: size], X[size: len(X)]
 history = [x for x in train]
 predictions = list()
 
-for t in range(len(test)):
-    model = ARIMA(history, order=(5, 1, 0))
-    model_fit = model.fit(disp=0)
-    output = model_fit.forecast()
-    yhat = output[0]
-    predictions.append(yhat)
-    obs = test[t]
-    history.append(obs)
-    print(f"predicted={yhat}, expected={obs}")
+# p 1-5 / d 0-3 / q 0-3
+for p in range(1, 6):
+    for d in range(4):
+        for q in range(4):
+            for t in range(len(test)):
+                model = ARIMA(history, order=(5, 1, 0))
+                model_fit = model.fit(disp=0)
+                output = model_fit.forecast()
+                yhat = output[0]
+                predictions.append(yhat)
+                obs = test[t]
+                history.append(obs)
+                print(f"predicted={yhat}, expected={obs}")
 
 # Mean squared error of the predictions
 error = mean_squared_error(test, predictions)

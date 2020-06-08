@@ -3,7 +3,7 @@ from os.path import dirname, join
 from pandas import read_csv
 from matplotlib import pyplot
 
-# In case of running this file in terminal these lines must be uncommented
+# In case of running this file from the project main folder these lines must be uncommented
 # This assumes the current working directory is this folder
 PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
 os.chdir(PATH)

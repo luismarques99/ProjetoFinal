@@ -10,14 +10,14 @@ from matplotlib import pyplot
 PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
 os.chdir(PATH)
 
-file = os.path.join("files", "shampoo-sales.csv")
+file_path = os.path.join("files", "shampoo-sales.csv")
 
 
 def parser(x):
     return datetime.strptime(f"190{x}", "%Y-%m")
 
 
-series = read_csv(file, header=0, index_col=0, parse_dates=0,
+series = read_csv(file_path, header=0, index_col=0, parse_dates=0,
                   squeeze=True, date_parser=parser)
 # print(series.head())
 

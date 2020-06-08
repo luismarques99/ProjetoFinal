@@ -5,7 +5,7 @@ from pandas import concat
 from matplotlib import pyplot
 from sklearn.metrics import mean_squared_error
 
-PATH = os.path.join(".", "week-1_introduction", "1-basic-plots")
+PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
 os.chdir(PATH)
 
 file = os.path.join("files", "daily-births.csv")

@@ -7,7 +7,7 @@ from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 from matplotlib import pyplot
 
-PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
+PATH = os.path.join(".", "week-1_introduction", "1-basic-plots")
 os.chdir(PATH)
 
 file_path = os.path.join("files", "shampoo-sales.csv")

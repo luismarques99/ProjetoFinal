@@ -5,7 +5,7 @@ from matplotlib import pyplot
 
 # In case of running this file in terminal these lines must be uncommented
 # This assumes the current working directory is this folder
-PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
+PATH = os.path.join(".", "week-1_introduction", "1-basic-plots")
 os.chdir(PATH)
 
 series = read_csv(join("files", "daily-births.csv"),

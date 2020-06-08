@@ -5,7 +5,7 @@ from pandas import concat
 from matplotlib import pyplot
 from pandas.plotting import lag_plot
 
-PATH = os.path.join(".", "Week-1_Introduction", "1.Basic-Plots")
+PATH = os.path.join(".", "week-1_introduction", "1-basic-plots")
 os.chdir(PATH)
 
 series = read_csv(os.path.join(

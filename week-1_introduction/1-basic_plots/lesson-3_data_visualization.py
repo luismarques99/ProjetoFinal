@@ -12,8 +12,7 @@ from pandas.plotting import autocorrelation_plot
 To test any plot, uncomment only the lines of code below the name of it
 """
 
-
-# In case of running this file in terminal these lines must be uncommented
+# In case of running this file from the project main folder these lines must be uncommented
 # This assumes the current working directory is this folder
 PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
 os.chdir(PATH)

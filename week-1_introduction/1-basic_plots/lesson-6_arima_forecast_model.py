@@ -17,8 +17,14 @@ def parser(x):
     return datetime.strptime(f"190{x}", "%Y-%m")
 
 
-series = read_csv(file_path, header=0, index_col=0, parse_dates=False,
-                  squeeze=True, date_parser=parser)
+series = read_csv(
+    file_path,
+    header=0,
+    index_col=0,
+    parse_dates=False,
+    squeeze=True,
+    date_parser=parser,
+)
 # print(series.head())
 
 # Running this example tells us the time series is not stationary and require differencing to make
@@ -47,12 +53,16 @@ series = read_csv(file_path, header=0, index_col=0, parse_dates=False,
 # Rolling forecast ARIMA model
 X = series.values
 size = int(len(X) * 0.66)
-train, test = X[0: size], X[size: len(X)]
+train, test = X[0:size], X[size : len(X)]
 history = [x for x in train]
 predictions = list()
 
+p = 5
+d = 1
+q = 0
+
 for t in range(len(test)):
-    model = ARIMA(history, order=(5, 1, 0))
+    model = ARIMA(history, order=(p, d, q))
     model_fit = model.fit(disp=0)
     output = model_fit.forecast()
     yhat = output[0]
@@ -72,4 +82,11 @@ print(f"Test MSE: {format(error, '0.3f')}")
 pyplot.plot(train)
 pyplot.plot([None for i in train] + [x for x in test], color="green")
 pyplot.plot([None for i in train] + [x for x in predictions], color="red")
-pyplot.show()
+pyplot.gcf().canvas.set_window_title(f"ARIMA({p}, {d}, {q})")
+# pyplot.savefig(f"ARIMA({p},{d},{q}).png")
+# pyplot.show()
+
+# pyplot.plot(test, color="green")
+# pyplot.plot(predictions, color="red")
+# pyplot.gcf().canvas.set_window_title(f"ARIMA({p}, {d}, {q})")
+# pyplot.show()

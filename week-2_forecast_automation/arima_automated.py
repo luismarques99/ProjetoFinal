@@ -9,6 +9,8 @@ from numpy.linalg import LinAlgError
 
 
 class arima_model:
+    """Class that represents the structure of my automated ARIMA model"""
+
     OUTPUT_FOLDER = "output"
     TRAIN_SIZE = 0.66
     # FIXME: Necessário colocar isto numa função, mas ainda não consegui
@@ -18,6 +20,15 @@ class arima_model:
         pass
 
     def __init__(self, filename, date_parser, p, d, q):
+        """Creates an instance of an ARIMA model
+
+        Args:
+            filename (string): name of the file to create the model
+            date_parser (function): function to parse the date
+            p (int): number of lagged observations
+            d (int): number of times that the raw observations are differenced
+            q (int): size of the moving average window
+        """
         self.p = p
         self.d = d
         self.q = q
@@ -32,6 +43,8 @@ class arima_model:
         self.execute()
 
     def execute(self):
+        """Executes the model"""
+
         self.file.write(f"» ARIMA({self.p}, {self.d} , {self.q}) model predictions «\n")
         try:
             for t in range(len(self.test)):
@@ -68,6 +81,11 @@ class arima_model:
         print(f"The model ARIMA({self.p}, {self.d} , {self.q}) was successfully exported!")
 
     def create_folder(self):
+        """Creates a folder for the model
+
+        Returns:
+            string: folder path
+        """
         single_folder = f"ARIMA({self.p},{self.d},{self.q})"
         folder = os.path.join(self.OUTPUT_FOLDER, single_folder)
         try:
@@ -82,12 +100,18 @@ class arima_model:
         return folder
 
     def open_file(self):
+        """Creates and opens a writing file for the model
+
+        Returns:
+            file: file ready to write
+        """
         file_name = f"ARIMA({self.p},{self.d},{self.q})-info.txt"
         file_path = os.path.join(self.folder, file_name)
         file = open(file_path, "w")
         return file
 
     def export_plot(self):
+        """Exports the plot to a folder"""
         pyplot.plot(self.train, color="blue")
         pyplot.plot([None for i in self.train] + [x for x in self.test], color="green")
         pyplot.plot([None for i in self.train] + [x for x in self.predictions], color="red")

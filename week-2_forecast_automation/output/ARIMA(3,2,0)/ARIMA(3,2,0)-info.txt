@@ -1,0 +1,18 @@
+» ARIMA(3, 2 , 0) model predictions «
+
+predicted=[406.18449091], expected=342.3
+predicted=[307.24177491], expected=339.7
+predicted=[377.73336277], expected=440.4
+predicted=[371.15222949], expected=315.9
+predicted=[431.84751639], expected=439.3
+predicted=[404.69142669], expected=401.3
+predicted=[472.41790563], expected=437.4
+predicted=[396.16701926], expected=575.5
+predicted=[602.94427761], expected=407.6
+predicted=[537.00349376], expected=682.0
+predicted=[583.28341961], expected=475.3
+predicted=[677.62335079], expected=581.3
+predicted=[542.10375749], expected=646.9
+
+
+Test MSE: 10513.271

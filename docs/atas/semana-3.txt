@@ -1,0 +1,21 @@
+Local: MS Teams
+Data: 12-06-2020
+Hora inicio: 17h00m
+Hora fim: 18h00m
+Elaborado por: Luís Marques
+
+Participantes:
+	- Luís Marques
+	- Prof. Fábio Silva
+
+
+Assuntos tratados:
+	- Breve explicação do trabalho da semana 2.
+	- Modelos a estudar na semana 3 (recursos fornecidos pelo professor).
+	
+	Tarefas:
+		- Estudar os modelos seguintes e trabalhá-los da mesma forma que o modelo da semana 2:
+			- "Arima Traffic Improved";
+			- "Arima Traffic Multivariate Improved";
+			- "Sarima Traffic Improved";
+			- "Sarima Traffic Multivariate".

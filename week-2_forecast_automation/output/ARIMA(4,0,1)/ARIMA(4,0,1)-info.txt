@@ -1,0 +1,3 @@
+» ARIMA(4, 0 , 1) model predictions «
+
+predicted=[340.90949893], expected=342.3

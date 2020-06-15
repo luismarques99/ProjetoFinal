@@ -1,5 +1,6 @@
 import os
 import shutil
+import csv
 from pandas import read_csv
 from pandas import DataFrame
 from matplotlib import pyplot
@@ -13,7 +14,9 @@ class arima_model:
 
     OUTPUT_FOLDER = "output"
     TRAIN_SIZE = 0.66
+
     # FIXME: Necessário colocar isto numa função, mas ainda não consegui
+    """Resets the output folder"""
     try:
         shutil.rmtree(OUTPUT_FOLDER)
     except FileNotFoundError:
@@ -61,19 +64,23 @@ class arima_model:
             self.file.write(f"\n\n\nTest MSE: {format(error, '0.3f')}")
             self.export_plot()
 
-        except ValueError as err:
-            print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a ValueError: {err}")
-            # self.file.write(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a ValueError: {err}")
+        except Exception as err:
+            print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a {type(err).__name__}: {err}")
             self.file.close()
             shutil.rmtree(self.folder)
             pass
 
-        except LinAlgError as err:
-            print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a LinAlgError: {err}")
-            # self.file.write(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a LinAlgError: {err}")
-            self.file.close()
-            shutil.rmtree(self.folder)
-            pass
+        # except ValueError as err:
+        #     print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a ValueError: {err}")
+        #     self.file.close()
+        #     shutil.rmtree(self.folder)
+        #     pass
+
+        # except LinAlgError as err:
+        #     print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a LinAlgError: {err}")
+        #     self.file.close()
+        #     shutil.rmtree(self.folder)
+        #     pass
 
         finally:
             self.file.close()
@@ -94,7 +101,6 @@ class arima_model:
             os.mkdir(self.OUTPUT_FOLDER)
             os.mkdir(folder)
         except FileExistsError:
-            # os.replace(folder, folder)
             shutil.rmtree(folder)
             os.mkdir(folder)
         return folder
@@ -118,12 +124,6 @@ class arima_model:
         pyplot.gcf().canvas.set_window_title(f"ARIMA({self.p}, {self.d}, {self.q})")
         pyplot.savefig(os.path.join(self.folder, f"ARIMA({self.p},{self.d},{self.q})-plot.png"))
 
-    # def reset_output_folder(self):
-    #     try:
-    #         shutil.rmtree(self.OUTPUT_FOLDER)
-    #     except FileNotFoundError:
-    #         pass
-
 
 def get_series(filename="daily-births.csv", date_parser=None):
     """Set the series
@@ -144,3 +144,6 @@ def get_series(filename="daily-births.csv", date_parser=None):
     except FileNotFoundError as err:
         print(f"File Not Found ('{filename}'): {err}")
     return series
+
+
+# def write_csv_file()

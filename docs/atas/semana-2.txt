@@ -20,3 +20,9 @@ Assuntos tratados:
 			- q entre 0 e 3
 		- Guardar dados de estudo num ou mais ficheiros.
 		- Guardar gráficos gerados.
+
+	
+Retrospetiva:
+	- Foram realizadas todas as tarefas propostas.
+	- As previsões do modelo devem ser exportadas para ficheiros .csv em vez de .txt.
+	- (Opcional) Falta fazer um ficheiro de log no final para assinalar os modelos que não tiveram sucesso.

@@ -14,7 +14,7 @@ To test any plot, uncomment only the lines of code below the name of it
 
 # In case of running this file from the project main folder these lines must be uncommented
 # This assumes the current working directory is this folder
-PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
+PATH = os.path.join(".", "sprint-1_introduction", "1-basic_plots")
 os.chdir(PATH)
 
 
@@ -22,12 +22,9 @@ def parser(x):
     return datetime.strptime(f"190{x}", "%Y-%m")
 
 
-series = read_csv(os.path.join("files", "shampoo-sales.csv"),
-                  header=0,
-                  index_col=0,
-                  parse_dates=[0],
-                  squeeze=True,
-                  date_parser=parser)
+series = read_csv(
+    os.path.join("files", "shampoo-sales.csv"), header=0, index_col=0, parse_dates=[0], squeeze=True, date_parser=parser
+)
 
 # Line plots
 

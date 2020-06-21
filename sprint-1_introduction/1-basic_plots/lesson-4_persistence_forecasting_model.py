@@ -5,7 +5,7 @@ from pandas import concat
 from matplotlib import pyplot
 from sklearn.metrics import mean_squared_error
 
-PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
+PATH = os.path.join(".", "sprint-1_introduction", "1-basic_plots")
 os.chdir(PATH)
 
 file = os.path.join("files", "daily-births.csv")
@@ -21,7 +21,7 @@ print(data_frame.head())
 # Split into train and test sets
 X = data_frame.values
 train_size = int(len(X) * 0.66)
-train, test = X[1: train_size], X[train_size:]
+train, test = X[1:train_size], X[train_size:]
 train_X, train_y = train[:, 0], train[:, 1]
 test_X, test_y = test[:, 0], test[:, 1]
 

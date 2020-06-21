@@ -5,11 +5,10 @@ from pandas import concat
 from matplotlib import pyplot
 from pandas.plotting import lag_plot
 
-PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
+PATH = os.path.join(".", "sprint-1_introduction", "1-basic_plots")
 os.chdir(PATH)
 
-series = read_csv(os.path.join(
-    "files", "daily-minimum-temperatures.csv"), header=0, index_col=0)
+series = read_csv(os.path.join("files", "daily-minimum-temperatures.csv"), header=0, index_col=0)
 
 # print(series.head())
 

@@ -7,7 +7,7 @@ from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 from matplotlib import pyplot
 
-PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
+PATH = os.path.join(".", "sprint-1_introduction", "1-basic_plots")
 os.chdir(PATH)
 
 file_path = os.path.join("files", "shampoo-sales.csv")
@@ -17,14 +17,7 @@ def parser(x):
     return datetime.strptime(f"190{x}", "%Y-%m")
 
 
-series = read_csv(
-    file_path,
-    header=0,
-    index_col=0,
-    parse_dates=False,
-    squeeze=True,
-    date_parser=parser,
-)
+series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=parser,)
 # print(series.head())
 
 # Running this example tells us the time series is not stationary and require differencing to make

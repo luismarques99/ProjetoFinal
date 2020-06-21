@@ -5,11 +5,10 @@ from matplotlib import pyplot
 
 # In case of running this file from the project main folder these lines must be uncommented
 # This assumes the current working directory is this folder
-PATH = os.path.join(".", "week-1_introduction", "1-basic_plots")
+PATH = os.path.join(".", "sprint-1_introduction", "1-basic_plots")
 os.chdir(PATH)
 
-series = read_csv(join("files", "daily-births.csv"),
-                  header=0, index_col=0, parse_dates=True)
+series = read_csv(join("files", "daily-births.csv"), header=0, index_col=0, parse_dates=True)
 
 # pandas .head() default lines are 5, but it can be passed as an argument [.head(10)]
 print(f"\nHead:\n{series.head()}")

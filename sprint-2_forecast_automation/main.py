@@ -2,7 +2,7 @@ import os
 from arima_automated import arima_model
 from pandas import datetime
 
-PATH = os.path.join(".", "week-2_forecast_automation")
+PATH = os.path.join(".", "sprint-2_forecast_automation")
 os.chdir(PATH)
 
 

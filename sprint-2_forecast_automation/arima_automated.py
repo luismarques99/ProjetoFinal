@@ -8,6 +8,9 @@ from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 from numpy.linalg import LinAlgError
 
+PATH = os.path.join(".", "sprint-2_forecast_automation")
+os.chdir(PATH)
+
 
 class arima_model:
     """Class that represents the structure of my automated ARIMA model"""
@@ -15,7 +18,6 @@ class arima_model:
     OUTPUT_FOLDER = "output"
     TRAIN_SIZE = 0.66
 
-    # FIXME: Necessário colocar isto numa função, mas ainda não consegui
     """Resets the output folder"""
     try:
         shutil.rmtree(OUTPUT_FOLDER)
@@ -35,7 +37,10 @@ class arima_model:
         self.p = p
         self.d = d
         self.q = q
-        self.values = get_series(filename, date_parser).values
+        # self.folder = os.path.join(OUTPUT_FOLDER, f"ARIMA({self.p},{self.d},{self.q})")
+        self.dataset = get_series(filename, date_parser)
+        self.name = dataset.name
+        self.values = dataset.values
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
         self.train = self.values[0 : self.train_size]
         self.test = self.values[self.train_size : len(self.values)]
@@ -48,7 +53,7 @@ class arima_model:
     def execute(self):
         """Executes the model"""
 
-        self.file.write(f"» ARIMA({self.p}, {self.d} , {self.q}) model predictions «\n")
+        # self.file.write(f"» ARIMA({self.p}, {self.d} , {self.q}) model predictions «\n")
         try:
             for t in range(len(self.test)):
                 model = ARIMA(self.history, order=(self.p, self.d, self.q))
@@ -68,6 +73,11 @@ class arima_model:
             print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a {type(err).__name__}: {err}")
             self.file.close()
             shutil.rmtree(self.folder)
+            # Imprimir em log file que o modelo não foi aprovado
+            pass
+
+        else:
+            # Imprimir em log file que o modelo foi aprovado
             pass
 
         # except ValueError as err:
@@ -125,12 +135,42 @@ class arima_model:
         pyplot.savefig(os.path.join(self.folder, f"ARIMA({self.p},{self.d},{self.q})-plot.png"))
 
 
-def get_series(filename="daily-births.csv", date_parser=None):
+class csv_writer:
+    """Class that represents the structure of a CSV file writer"""
+
+    def __init__(self, filename="", header=list()):
+        """Creates an instance of a CSV file writer
+
+        Args:
+            filename (str, required): string to define the name of the file. Defaults to "" (empty string).
+            header (str[], required): list of strings to be written as the header of the file. Defaults to list() (empty list).
+        """
+        self.file = open(filename, "w")
+        self.write_line(header)
+
+    def write_line(self, content=list()):
+        """Writes a list of strings as a line in the file
+
+        Args:
+            content (str[], required): list of strings to be written into the file. Defaults to list() (empty list).
+        """
+        self.file.write(content[0])
+        for index in range(len(content) - 1):
+            self.file.write(",")
+            self.file.write(content[index + 1])
+        self.file.write("\n")
+
+    def close(self):
+        """Closes the file"""
+        self.file.close()
+
+
+def get_series(filename="", date_parser=None):
     """Set the series
 
     Args:
         filename (str, opcional): name of the file to read (the file must be inside
-                                  the folder 'files'). Defaults to "daily-births.csv".
+                                  the folder 'files'). Defaults to "" (empty string).
         date_parser (function, optional): function to parse the date. Defaults to None.
 
     Returns:
@@ -144,6 +184,3 @@ def get_series(filename="daily-births.csv", date_parser=None):
     except FileNotFoundError as err:
         print(f"File Not Found ('{filename}'): {err}")
     return series
-
-
-# def write_csv_file()

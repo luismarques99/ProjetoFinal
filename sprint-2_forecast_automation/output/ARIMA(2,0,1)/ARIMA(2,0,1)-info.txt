@@ -1,1 +1,0 @@
-» ARIMA(2, 0 , 1) model predictions «

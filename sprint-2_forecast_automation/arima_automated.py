@@ -7,9 +7,10 @@ from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 from numpy.linalg import LinAlgError
+# from csv_writer import csv_writer
 
-PATH = os.path.join(".", "sprint-2_forecast_automation")
-os.chdir(PATH)
+# PATH = os.path.join(".", "sprint-2_forecast_automation")
+# os.chdir(PATH)
 
 
 class arima_model:
@@ -135,34 +136,34 @@ class arima_model:
         pyplot.savefig(os.path.join(self.folder, f"ARIMA({self.p},{self.d},{self.q})-plot.png"))
 
 
-class csv_writer:
-    """Class that represents the structure of a CSV file writer"""
+# class csv_writer:
+#     """Class that represents the structure of a CSV file writer"""
 
-    def __init__(self, filename="", header=list()):
-        """Creates an instance of a CSV file writer
+#     def __init__(self, filename="", header=list()):
+#         """Creates an instance of a CSV file writer
 
-        Args:
-            filename (str, required): string to define the name of the file. Defaults to "" (empty string).
-            header (str[], required): list of strings to be written as the header of the file. Defaults to list() (empty list).
-        """
-        self.file = open(filename, "w")
-        self.write_line(header)
+#         Args:
+#             filename (str, required): string to define the name of the file. Defaults to "" (empty string).
+#             header (str[], required): list of strings to be written as the header of the file. Defaults to list() (empty list).
+#         """
+#         self.file = open(filename, "w")
+#         self.write_line(header)
 
-    def write_line(self, content=list()):
-        """Writes a list of strings as a line in the file
+#     def write_line(self, content=list()):
+#         """Writes a list of strings as a line in the file
 
-        Args:
-            content (str[], required): list of strings to be written into the file. Defaults to list() (empty list).
-        """
-        self.file.write(content[0])
-        for index in range(len(content) - 1):
-            self.file.write(",")
-            self.file.write(content[index + 1])
-        self.file.write("\n")
+#         Args:
+#             content (str[], required): list of strings to be written into the file. Defaults to list() (empty list).
+#         """
+#         self.file.write(content[0])
+#         for index in range(len(content) - 1):
+#             self.file.write(",")
+#             self.file.write(content[index + 1])
+#         self.file.write("\n")
 
-    def close(self):
-        """Closes the file"""
-        self.file.close()
+#     def close(self):
+#         """Closes the file"""
+#         self.file.close()
 
 
 def get_series(filename="", date_parser=None):

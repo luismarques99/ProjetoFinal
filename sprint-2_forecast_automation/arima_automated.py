@@ -1,22 +1,25 @@
 import os
 import shutil
-import csv
 from pandas import read_csv
 from pandas import DataFrame
+from pandas import datetime
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
-from numpy.linalg import LinAlgError
-# from csv_writer import csv_writer
+from csv_writer import csv_writer
 
-# PATH = os.path.join(".", "sprint-2_forecast_automation")
-# os.chdir(PATH)
+PATH = os.path.join(".", "sprint-2_forecast_automation")
+os.chdir(PATH)
+
+
+OUTPUT_FOLDER = "output"
+mse_list = list()
+log_list = list()
 
 
 class arima_model:
     """Class that represents the structure of my automated ARIMA model"""
 
-    OUTPUT_FOLDER = "output"
     TRAIN_SIZE = 0.66
 
     """Resets the output folder"""
@@ -25,7 +28,7 @@ class arima_model:
     except FileNotFoundError:
         pass
 
-    def __init__(self, filename, date_parser, p, d, q):
+    def __init__(self, filename: str, date_parser, p: int, d: int, q: int):
         """Creates an instance of an ARIMA model
 
         Args:
@@ -38,65 +41,48 @@ class arima_model:
         self.p = p
         self.d = d
         self.q = q
-        # self.folder = os.path.join(OUTPUT_FOLDER, f"ARIMA({self.p},{self.d},{self.q})")
-        self.dataset = get_series(filename, date_parser)
-        self.name = dataset.name
-        self.values = dataset.values
+        self.series = set_series(filename, date_parser)
+        self.name = f"ARIMA({self.p},{self.d},{self.q})"
+        self.values = self.series.values
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
         self.train = self.values[0 : self.train_size]
         self.test = self.values[self.train_size : len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
         self.folder = self.create_folder()
-        self.file = self.open_file()
+        self.file = self.create_file(["Predict", self.series.name])
         self.execute()
 
     def execute(self):
         """Executes the model"""
 
-        # self.file.write(f"» ARIMA({self.p}, {self.d} , {self.q}) model predictions «\n")
         try:
             for t in range(len(self.test)):
                 model = ARIMA(self.history, order=(self.p, self.d, self.q))
                 model_fit = model.fit(disp=0)
                 output = model_fit.forecast()
-                yhat = output[0]
-                self.predictions.append(yhat)
+                prediction = output[0][0]
+                self.predictions.append(prediction)
                 obs = self.test[t]
                 self.history.append(obs)
-                self.file.write(f"\npredicted={yhat}, expected={obs}")
+                self.file.write_line([str(prediction), str(obs)])
 
-            error = mean_squared_error(self.test, self.predictions)
-            self.file.write(f"\n\n\nTest MSE: {format(error, '0.3f')}")
+            self.mse = mean_squared_error(self.test, self.predictions)
+            mse_list.append([str(self.mse), f'"{self.name}"'])
+            mse_list.sort(key=lambda item: float(item[0]))
             self.export_plot()
 
         except Exception as err:
-            print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a {type(err).__name__}: {err}")
-            self.file.close()
+            log_list.append(f">> Model ARIMA({self.p}, {self.d} , {self.q}) not exported! {type(err).__name__}: {err}")
             shutil.rmtree(self.folder)
-            # Imprimir em log file que o modelo não foi aprovado
             pass
 
         else:
-            # Imprimir em log file que o modelo foi aprovado
+            log_list.append(f">> Model ARIMA({self.p}, {self.d} , {self.q}) exported with success.")
             pass
-
-        # except ValueError as err:
-        #     print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a ValueError: {err}")
-        #     self.file.close()
-        #     shutil.rmtree(self.folder)
-        #     pass
-
-        # except LinAlgError as err:
-        #     print(f"The model ARIMA({self.p}, {self.d} , {self.q}) raised a LinAlgError: {err}")
-        #     self.file.close()
-        #     shutil.rmtree(self.folder)
-        #     pass
 
         finally:
             self.file.close()
-
-        print(f"The model ARIMA({self.p}, {self.d} , {self.q}) was successfully exported!")
 
     def create_folder(self):
         """Creates a folder for the model
@@ -105,26 +91,26 @@ class arima_model:
             string: folder path
         """
         single_folder = f"ARIMA({self.p},{self.d},{self.q})"
-        folder = os.path.join(self.OUTPUT_FOLDER, single_folder)
+        folder = os.path.join(OUTPUT_FOLDER, single_folder)
         try:
             os.mkdir(folder)
         except FileNotFoundError:
-            os.mkdir(self.OUTPUT_FOLDER)
+            os.mkdir(OUTPUT_FOLDER)
             os.mkdir(folder)
         except FileExistsError:
             shutil.rmtree(folder)
             os.mkdir(folder)
         return folder
 
-    def open_file(self):
+    def create_file(self, header: list()):
         """Creates and opens a writing file for the model
 
         Returns:
             file: file ready to write
         """
-        file_name = f"ARIMA({self.p},{self.d},{self.q})-info.txt"
+        file_name = f"ARIMA({self.p},{self.d},{self.q}).csv"
         file_path = os.path.join(self.folder, file_name)
-        file = open(file_path, "w")
+        file = csv_writer(file_path, header)
         return file
 
     def export_plot(self):
@@ -134,44 +120,14 @@ class arima_model:
         pyplot.plot([None for i in self.train] + [x for x in self.predictions], color="red")
         pyplot.gcf().canvas.set_window_title(f"ARIMA({self.p}, {self.d}, {self.q})")
         pyplot.savefig(os.path.join(self.folder, f"ARIMA({self.p},{self.d},{self.q})-plot.png"))
+        pyplot.close()
 
 
-# class csv_writer:
-#     """Class that represents the structure of a CSV file writer"""
-
-#     def __init__(self, filename="", header=list()):
-#         """Creates an instance of a CSV file writer
-
-#         Args:
-#             filename (str, required): string to define the name of the file. Defaults to "" (empty string).
-#             header (str[], required): list of strings to be written as the header of the file. Defaults to list() (empty list).
-#         """
-#         self.file = open(filename, "w")
-#         self.write_line(header)
-
-#     def write_line(self, content=list()):
-#         """Writes a list of strings as a line in the file
-
-#         Args:
-#             content (str[], required): list of strings to be written into the file. Defaults to list() (empty list).
-#         """
-#         self.file.write(content[0])
-#         for index in range(len(content) - 1):
-#             self.file.write(",")
-#             self.file.write(content[index + 1])
-#         self.file.write("\n")
-
-#     def close(self):
-#         """Closes the file"""
-#         self.file.close()
-
-
-def get_series(filename="", date_parser=None):
+def set_series(filename: str, date_parser: function = None):
     """Set the series
 
     Args:
-        filename (str, opcional): name of the file to read (the file must be inside
-                                  the folder 'files'). Defaults to "" (empty string).
+        filename (str): name of the file to read (the file must be inside the folder 'files').
         date_parser (function, optional): function to parse the date. Defaults to None.
 
     Returns:
@@ -185,3 +141,57 @@ def get_series(filename="", date_parser=None):
     except FileNotFoundError as err:
         print(f"File Not Found ('{filename}'): {err}")
     return series
+
+
+def arima_automated(
+    filename: str,
+    date_parser: function = None,
+    p_range: list() = [1, 2],
+    d_range: list() = [0, 1],
+    q_range: list() = [0, 1],
+):
+    """ARIMA model automated
+
+    Args:
+        filename (str): name of the dataset file to import to the model.
+        date_parser (function, optional): function to parse the date. Defaults to None.
+        p_range (list, optional): range of values for the number of lagged observations. Defaults to [1, 2].
+        d_range (list, optional): range of values for the number of times that the raw observations are differenced.
+                                  Defaults to [0, 1].
+        q_range (list, optional): range of values for the size of the moving average window. Defaults to [0, 1].
+    """
+    for p in list(range(p_range[0], p_range[-1])):
+        for d in list(range(d_range[0], d_range[-1])):
+            for q in list(range(q_range[0], q_range[-1])):
+                arima_model(filename, date_parser, p, d, q)
+    return
+
+
+def export_mse_list():
+    """Exports the mse rating list to a .csv file"""
+    mse_file = csv_writer(os.path.join(OUTPUT_FOLDER, "mse_rating.csv"), ["MSE", "Model"])
+    mse_file.write_at_once(mse_list)
+    mse_file.close()
+
+
+def export_log_file():
+    """Exports the log list to a .txt file"""
+    log_file = open(os.path.join(OUTPUT_FOLDER, "log.txt"), "w")
+    for line in log_list:
+        log_file.write(line)
+        log_file.write("\n")
+    log_file.close()
+
+
+def init():
+    """Main function"""
+
+    def parser(x):
+        return datetime.strptime(f"190{x}", "%Y-%m")
+
+    arima_automated(filename="shampoo-sales.csv", date_parser=parser, p_range=[1, 6], d_range=[0, 4], q_range=[0, 4])
+    export_mse_list()
+    export_log_file()
+
+
+init()

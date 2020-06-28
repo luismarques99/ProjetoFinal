@@ -8,6 +8,7 @@ from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
 from csv_writer import csv_writer
 
+
 PATH = os.path.join(".", "sprint-2_forecast_automation")
 os.chdir(PATH)
 
@@ -123,7 +124,7 @@ class arima_model:
         pyplot.close()
 
 
-def set_series(filename: str, date_parser: function = None):
+def set_series(filename: str, date_parser=None):
     """Set the series
 
     Args:
@@ -144,11 +145,7 @@ def set_series(filename: str, date_parser: function = None):
 
 
 def arima_automated(
-    filename: str,
-    date_parser: function = None,
-    p_range: list() = [1, 2],
-    d_range: list() = [0, 1],
-    q_range: list() = [0, 1],
+    filename: str, date_parser=None, p_range: list() = [1, 2], d_range: list() = [0, 1], q_range: list() = [0, 1],
 ):
     """ARIMA model automated
 

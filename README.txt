@@ -1,5 +1,5 @@
 > Requirements
-python3, pip
+python3, pip3
 
-> Instalation
+> Setup
 pip install -r requirements.txt

@@ -1,9 +1,7 @@
 import os
 import shutil
 
-from pandas import read_csv
-from pandas import DataFrame
-from pandas import datetime
+from pandas import read_csv, DataFrame, datetime
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error

@@ -1,11 +1,13 @@
 import os
 import shutil
+
 from pandas import read_csv
 from pandas import DataFrame
 from pandas import datetime
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
+
 from csv_writer import csv_writer
 
 
@@ -75,6 +77,7 @@ class arima_model:
 
         except Exception as err:
             log_list.append(f">> Model ARIMA({self.p}, {self.d} , {self.q}) not exported! {type(err).__name__}: {err}")
+            self.file.close()
             shutil.rmtree(self.folder)
             pass
 

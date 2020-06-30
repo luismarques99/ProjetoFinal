@@ -135,7 +135,6 @@ def set_series(filename: str, date_parser=None):
     Returns:
         DataFrame: time series
     """
-
     file_path = os.path.join("files", filename)
     series = DataFrame()
     try:
@@ -185,6 +184,14 @@ def init():
     """Main function"""
 
     def parser(x):
+        """Parses the dates from shampoo-sales.csv dataset
+
+        Args:
+            x (int): last digit of the year
+
+        Returns:
+            datetime: new date time parsed from a string
+        """
         return datetime.strptime(f"190{x}", "%Y-%m")
 
     arima_automated(filename="shampoo-sales.csv", date_parser=parser, p_range=[1, 6], d_range=[0, 4], q_range=[0, 4])

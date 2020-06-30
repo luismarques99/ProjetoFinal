@@ -1,57 +1,59 @@
 import os
+import copy
 
-from pandas import DataFrame
-from pandas import Series
-from pandas import concat
-from pandas import read_csv
-from pandas import datetime
+from pandas import DataFrame, Series, concat, read_csv, datetime
+from pandas.plotting import autocorrelation_plot
+
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import TimeSeriesSplit
 
 from statsmodels.tsa.arima_model import ARIMA
-
 from matplotlib import pyplot
-from numpy import array
-from numpy import concatenate
+from numpy import array, concatenate
 from math import sqrt
-
-from pandas.plotting import autocorrelation_plot
 from pathlib import Path
-
-import numpy as np
-import pandas as pd
-import copy
 
 
 PATH = os.path.join(".", "sprint-3")
 os.chdir(PATH)
 
 
-# Date Parser
-def parser(x):
-    return datetime.strptime(x, "%Y-%m-%d %H:%M:%S+00:00")
+OUTPUT_FOLDER = "results_arima_2"
 
 
-def run_tests(train, test, scaler, arima_parameters, num_predicitons, location, data_split):
+# def parser(x):
+#     """Parses the dates from the dataset
+
+#     Args:
+#         x (int): day of the datetime
+
+#     Returns:
+#         datetime: new datetime parsed from a string
+#     """
+#     return datetime.strptime(x, "%Y-%m-%d %H:%M:%S+00:00")
+
+
+def run_tests(train, test, scaler, arima_parameters, num_predictions, location, data_split):
     # Output filename
-    outputfilename = location + "_" + str(num_predictions)
+    outputfilename = f"{location}_{num_predictions}"
     # Save each result
-    results_list = []
+    results_list = list()
 
     # prediction_list = [-96, -72, -48, -36, -24, -12 ]
     prediction_list = [-72]
 
     for s_seq in prediction_list:
-        history = np.concatenate((train, test[0:s_seq]), axis=0)
-        if s_seq + num_predicitons == 0:
+        history = concatenate((train, test[0:s_seq]), axis=0)
+        if s_seq + num_predictions == 0:
             real_results = test[s_seq:]
         else:
-            real_results = test[s_seq : s_seq + num_predicitons]
+            real_results = test[s_seq : s_seq + num_predictions]
 
         ## Create Tests for next
         for arima_parameter in arima_parameters:
-            print("Results for ARIMA with window %s" % arima_parameter[0])
+            # print("Results for ARIMA with window %s" % arima_parameter[0])
+            print(f"Results for ARIMA with window {arima_parameter[0]}")
             try:
                 broke = 0
                 model = ARIMA(history, order=(arima_parameter[0], arima_parameter[1], arima_parameter[2]))
@@ -69,7 +71,6 @@ def run_tests(train, test, scaler, arima_parameters, num_predicitons, location, 
                 rmse_error = 0
 
             if broke == 0:
-
                 # raw_test_values = dt1[len(train_scaled)+1:len(train_scaled)+1+len(test)]
                 ## Calculate MSE
                 mae_error = mean_absolute_error(test_unscaled, output_unscaled)
@@ -84,81 +85,37 @@ def run_tests(train, test, scaler, arima_parameters, num_predicitons, location, 
                 # pyplot.plot(test_unscaled, color='black')
                 # pyplot.plot(output_unscaled, color='red')
                 pyplot.plot(range(len(test_unscaled)), test_unscaled, marker="H", color="black", label="Real Values")
-                pyplot.plot(
-                    range(len(output_unscaled)), output_unscaled, marker="s", color="red", label="Blind Prediction"
-                )
+                pyplot.plot(range(len(output_unscaled)), output_unscaled, marker="s", color="red", label="Blind Prediction")
                 pyplot.ylabel("Speed Difference")
                 pyplot.xlabel("Timesteps")
                 pyplot.grid(which="major", alpha=0.3, color="#666666", linestyle="-")
                 pyplot.ylim([0, 45])
                 pyplot.xlim([0, 12])
 
-                ## Save Results
-                output_folder = "results_arima_2"
+                # output_file = f"""{outputfilename}_arima({arima_parameter[0]},{arima_parameter[1]},{arima_parameter[2]})
+                #             _predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.png"""
                 figure_name = os.path.join(
-                    output_folder,
-                    (
-                        outputfilename
-                        + "_arima("
-                        + str(arima_parameter[0])
-                        + ","
-                        + str(arima_parameter[1])
-                        + ","
-                        + str(arima_parameter[2])
-                        + ")_predictions_"
-                        + str(num_predictions)
-                        + "_crossvalidation_"
-                        + str(data_split)
-                        + "_test_"
-                        + str(s_seq)
-                        + ".png"
-                    ),
+                    OUTPUT_FOLDER,
+                    f"{outputfilename}_arima({arima_parameter[0]},{arima_parameter[1]},{arima_parameter[2]})_predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.png",
                 )
-                # figure_name = (
-                #     "results_arima_2/"
-                #     + outputfilename
-                #     + "_arima("
-                #     + str(arima_parameter[0])
-                #     + ","
-                #     + str(arima_parameter[1])
-                #     + ","
-                #     + str(arima_parameter[2])
-                #     + ")_predictions_"
-                #     + str(num_predictions)
-                #     + "_crossvalidation_"
-                #     + str(data_split)
-                #     + "_test_"
-                #     + str(s_seq)
-                #     + ".png"
-                # )
-                
+
+                ## Save Results
                 try:
                     pyplot.savefig(figure_name)
                 except FileNotFoundError:
-                    os.mkdir(output_folder)
+                    os.mkdir(OUTPUT_FOLDER)
+                    pyplot.savefig(figure_name)
 
                 ## Show
                 pyplot.show()
                 raw_results = {"predicted": output_unscaled, "real": test_unscaled}
                 print(raw_results)
-                results_dataset_raw = pd.DataFrame(raw_results)
+                results_dataset_raw = DataFrame(raw_results)
                 results_dataset_raw.to_csv(
-                    "results_arima_2/"
-                    + outputfilename
-                    + "_raw_"
-                    + "_arima("
-                    + str(arima_parameter[0])
-                    + ","
-                    + str(arima_parameter[1])
-                    + ","
-                    + str(arima_parameter[2])
-                    + ")_predictions_"
-                    + str(num_predictions)
-                    + "_crossvalidation_"
-                    + str(data_split)
-                    + "_test_"
-                    + str(s_seq)
-                    + ".csv"
+                    os.path.join(
+                        OUTPUT_FOLDER,
+                        f"{outputfilename}_raw_arima({arima_parameter[0]},{arima_parameter[1]},{arima_parameter[2]})_predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.csv",
+                    )
                 )
 
             results_list.append(
@@ -178,7 +135,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predicitons, location, 
             )
 
     columns = ["location", "predictedValues", "a1", "a2", "a3", "mae", "mse", "rmse", "split", "test", "broke"]
-    results_dataset = pd.DataFrame(results_list, columns=columns)
+    results_dataset = DataFrame(results_list, columns=columns)
     return results_dataset
 
 
@@ -195,13 +152,11 @@ predictions = [12]
 arima_windows = [(12, 1, 1)]
 
 columns = ["location", "predictedValues", "a1", "a2", "a3", "mae", "mse", "rmse", "split", "test", "broke"]
-results_dataset = pd.DataFrame(columns=columns)
+results_dataset = DataFrame(columns=columns)
 
 for location in locations:
 
-    dt1 = pd.read_csv(
-        r"N14Bosh_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"]
-    )
+    dt1 = read_csv(r"N14Bosh_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"])
     dt1 = dt1[["speed_diff"]]
     scaler = MinMaxScaler()
     dt1[["speed_diff"]] = scaler.fit_transform(dt1[["speed_diff"]])
@@ -218,15 +173,14 @@ for location in locations:
 
         for num_predictions in predictions:
 
-            results = run_tests(
-                train1.copy(), test1.copy(), scaler, arima_windows, num_predictions, location, data_split
-            )
+            results = run_tests(train1.copy(), test1.copy(), scaler, arima_windows, num_predictions, location, data_split)
 
-            results_dataset = pd.concat([results_dataset, results], ignore_index=True)
+            results_dataset = concat([results_dataset, results], ignore_index=True)
 
         data_split += 1
 
-results_dataset.to_csv(
-    "results_arima_2/ARIMA_results_summary.csv", index=False,
-)
-
+try:
+    results_dataset.to_csv(os.path.join(OUTPUT_FOLDER, "ARIMA_results_summary.csv"), index=False)
+except FileNotFoundError:
+    os.mkdir(OUTPUT_FOLDER)
+    results_dataset.to_csv(os.path.join(OUTPUT_FOLDER, "ARIMA_results_summary.csv"), index=False)

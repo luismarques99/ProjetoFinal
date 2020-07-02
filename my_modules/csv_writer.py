@@ -11,6 +11,14 @@ class csv_writer:
         self.file = open(filename, "w")
         self.write_line(header)
 
+    def write_at_once(self, content: list):
+        """Writes a list of string's list at once in the file
+
+        :param content (list): list of string's list
+        """
+        for element in content:
+            self.write_line(element)
+
     def write_line(self, content=list()):
         """Writes a list of strings as a line in the file
 

@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.append(os.path.join(".","my_modules"))
+
 from my_modules.csv_writer import csv_writer
 
 writer = csv_writer("teste.csv", ["param1", "param2"])

@@ -1,16 +1,17 @@
 import os
 import shutil
 
-from pandas import read_csv, DataFrame, datetime
+from pandas import read_csv, DataFrame
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
+from datetime import datetime
 
-from csv_writer import csv_writer
+from my_modules.csv_writer import csv_writer
+# from csv_writer import csv_writer
 
-
-PATH = os.path.join(".", "sprint-2_forecast_automation")
-os.chdir(PATH)
+# PATH = os.path.join(".", "sprint-2_forecast_automation")
+# os.chdir(PATH)
 
 
 OUTPUT_FOLDER = "output"
@@ -46,8 +47,8 @@ class arima_model:
         self.name = f"ARIMA({self.p},{self.d},{self.q})"
         self.values = self.series.values
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
-        self.train = self.values[0 : self.train_size]
-        self.test = self.values[self.train_size : len(self.values)]
+        self.train = self.values[0: self.train_size]
+        self.test = self.values[self.train_size: len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
         self.folder = self.create_folder()
@@ -56,7 +57,6 @@ class arima_model:
 
     def execute(self):
         """Executes the model"""
-
         try:
             for t in range(len(self.test)):
                 model = ARIMA(self.history, order=(self.p, self.d, self.q))
@@ -70,21 +70,23 @@ class arima_model:
 
             self.mse = mean_squared_error(self.test, self.predictions)
             mse_list.append([str(self.mse), f'"{self.name}"'])
+            # TODO: escolher a variavel a dar sort
             mse_list.sort(key=lambda item: float(item[0]))
             self.export_plot()
 
         except Exception as err:
-            log_list.append(f">> Model ARIMA({self.p}, {self.d} , {self.q}) not exported! {type(err).__name__}: {err}")
+            log_list.append(f">> Model {self.name} not exported! {type(err).__name__}: {err}")
             self.file.close()
             shutil.rmtree(self.folder)
             pass
 
         else:
-            log_list.append(f">> Model ARIMA({self.p}, {self.d} , {self.q}) exported with success.")
+            log_list.append(f">> Model {self.name} exported with success.")
             pass
 
         finally:
             self.file.close()
+            print(f"Model {self.name} finished.")
 
     def create_folder(self):
         """Creates a folder for the model
@@ -92,8 +94,7 @@ class arima_model:
         Returns:
             string: folder path
         """
-        single_folder = f"ARIMA({self.p},{self.d},{self.q})"
-        folder = os.path.join(OUTPUT_FOLDER, single_folder)
+        folder = os.path.join(OUTPUT_FOLDER, self.name)
         try:
             os.mkdir(folder)
         except FileNotFoundError:
@@ -138,14 +139,14 @@ def set_series(filename: str, date_parser=None):
     file_path = os.path.join("files", filename)
     series = DataFrame()
     try:
-        series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=date_parser,)
+        series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=date_parser, )
     except FileNotFoundError as err:
         print(f"File Not Found ('{filename}'): {err}")
     return series
 
 
 def arima_automated(
-    filename: str, date_parser=None, p_range: list() = [1, 2], d_range: list() = [0, 1], q_range: list() = [0, 1],
+        filename: str, date_parser=None, p_range: list() = [1, 2], d_range: list() = [0, 1], q_range: list() = [0, 1],
 ):
     """ARIMA model automated
 
@@ -169,6 +170,7 @@ def export_mse_list():
     mse_file = csv_writer(os.path.join(OUTPUT_FOLDER, "mse_rating.csv"), ["MSE", "Model"])
     mse_file.write_at_once(mse_list)
     mse_file.close()
+    print("MSE ranking file finished.")
 
 
 def export_log_file():
@@ -178,6 +180,7 @@ def export_log_file():
         log_file.write(line)
         log_file.write("\n")
     log_file.close()
+    print("Log file finshed.")
 
 
 def init():

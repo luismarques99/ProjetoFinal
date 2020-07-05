@@ -1,5 +1,9 @@
 import os
 import shutil
+import sys
+
+ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
+sys.path.append(ROOT_PATH)
 
 from pandas import read_csv, DataFrame
 from matplotlib import pyplot
@@ -8,11 +12,9 @@ from sklearn.metrics import mean_squared_error
 from datetime import datetime
 
 from my_modules.csv_writer import csv_writer
-# from csv_writer import csv_writer
 
-# PATH = os.path.join(".", "sprint-2_forecast_automation")
-# os.chdir(PATH)
-
+PATH = os.path.join(".", "sprint-2_forecast_automation")
+os.chdir(PATH)
 
 OUTPUT_FOLDER = "output"
 mse_list = list()
@@ -47,8 +49,8 @@ class arima_model:
         self.name = f"ARIMA({self.p},{self.d},{self.q})"
         self.values = self.series.values
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
-        self.train = self.values[0: self.train_size]
-        self.test = self.values[self.train_size: len(self.values)]
+        self.train = self.values[0 : self.train_size]
+        self.test = self.values[self.train_size : len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
         self.folder = self.create_folder()
@@ -139,14 +141,14 @@ def set_series(filename: str, date_parser=None):
     file_path = os.path.join("files", filename)
     series = DataFrame()
     try:
-        series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=date_parser, )
+        series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=date_parser,)
     except FileNotFoundError as err:
         print(f"File Not Found ('{filename}'): {err}")
     return series
 
 
 def arima_automated(
-        filename: str, date_parser=None, p_range: list() = [1, 2], d_range: list() = [0, 1], q_range: list() = [0, 1],
+    filename: str, date_parser=None, p_range: list() = [1, 2], d_range: list() = [0, 1], q_range: list() = [0, 1],
 ):
     """ARIMA model automated
 

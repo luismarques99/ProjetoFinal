@@ -11,22 +11,13 @@ from math import sqrt
 
 # from datetime import datetime
 
-# PATH = os.path.join(".", "sprint-3")
-# os.chdir(PATH)
-
+PATH = os.path.join(".", "sprint-3_arima_variations")
+os.chdir(PATH)
 
 OUTPUT_FOLDER = "results_arima_2"
 
 
 # def parser(x):
-#     """Parses the dates from the dataset
-
-#     Args:
-#         x (int): day of the datetime
-
-#     Returns:
-#         datetime: new datetime parsed from a string
-#     """
 #     return datetime.strptime(x, "%Y-%m-%d %H:%M:%S+00:00")
 
 
@@ -44,7 +35,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
         if s_seq + num_predictions == 0:
             real_results = test[s_seq:]
         else:
-            real_results = test[s_seq: s_seq + num_predictions]
+            real_results = test[s_seq : s_seq + num_predictions]
 
         ## Create Tests for next
         for arima_parameter in arima_parameters:
@@ -81,8 +72,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
                 # pyplot.plot(test_unscaled, color='black')
                 # pyplot.plot(output_unscaled, color='red')
                 pyplot.plot(range(len(test_unscaled)), test_unscaled, marker="H", color="black", label="Real Values")
-                pyplot.plot(range(len(output_unscaled)), output_unscaled, marker="s", color="red",
-                            label="Blind Prediction")
+                pyplot.plot(range(len(output_unscaled)), output_unscaled, marker="s", color="red", label="Blind Prediction")
                 pyplot.ylabel("Speed Difference")
                 pyplot.xlabel("Timesteps")
                 pyplot.grid(which="major", alpha=0.3, color="#666666", linestyle="-")
@@ -94,7 +84,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
                 figure_name = os.path.join(
                     OUTPUT_FOLDER,
                     f"{outputfilename}_arima({arima_parameter[0]},{arima_parameter[1]},{arima_parameter[2]})"
-                    f"_predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.png"
+                    f"_predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.png",
                 )
 
                 ## Save Results
@@ -113,7 +103,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
                     os.path.join(
                         OUTPUT_FOLDER,
                         f"{outputfilename}_raw_arima({arima_parameter[0]},{arima_parameter[1]},{arima_parameter[2]})"
-                        f"_predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.csv"
+                        f"_predictions_{num_predictions}_crossvalidation_{data_split}_test_{s_seq}.csv",
                     )
                 )
 
@@ -155,7 +145,7 @@ results_dataset = DataFrame(columns=columns)
 
 for location in locations:
 
-    dt1 = read_csv(r"N14Bosh_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"])
+    dt1 = read_csv("N14Bosch_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"])
     dt1 = dt1[["speed_diff"]]
     scaler = MinMaxScaler()
     dt1[["speed_diff"]] = scaler.fit_transform(dt1[["speed_diff"]])
@@ -167,12 +157,11 @@ for location in locations:
     data_split = 1
 
     for train_index, test_index in tscv.split(dt1):
-        print("TRAIN:", train_index, "TEST:", test_index)
+        print(f"TRAIN: {train_index}\nTEST: {test_index}")
         train1, test1 = dt1[train_index], dt1[test_index]
 
         for num_predictions in predictions:
-            results = run_tests(train1.copy(), test1.copy(), scaler, arima_windows, num_predictions, location,
-                                data_split)
+            results = run_tests(train1.copy(), test1.copy(), scaler, arima_windows, num_predictions, location, data_split)
 
             results_dataset = concat([results_dataset, results], ignore_index=True)
 

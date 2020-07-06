@@ -77,10 +77,6 @@ class arima_model:
                 self.history.append(obs)
                 self.file.write_line([str(prediction), str(obs)])
 
-            self.execution_time = time.time() - self.start_time
-            self.mae = mean_absolute_error(self.test, self.predictions)
-            self.mse = mean_squared_error(self.test, self.predictions)
-            self.rmse = sqrt(self.mse)
             self.export_plot()
 
         except Exception as err:
@@ -90,12 +86,16 @@ class arima_model:
             self.mse = -1
             self.rmse = -1
             self.file.close()
+            # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
-            pass
 
         else:
             log_list.append(f">> Model {self.name} exported with success.")
-            pass
+            self.execution_time = time.time() - self.start_time
+            self.mae = mean_absolute_error(self.test, self.predictions)
+            self.mse = mean_squared_error(self.test, self.predictions)
+            self.rmse = sqrt(self.mse)
+            self.file.close()
 
         finally:
             execution_time_list.append((str(self.execution_time), f'"{self.name}"'))
@@ -110,7 +110,6 @@ class arima_model:
             rmse_list.append((str(self.rmse), f'"{self.name}"'))
             rmse_list.sort(key=lambda line: float(line[0]))
 
-            self.file.close()
             print(f"Model {self.name} finished.")
 
     def create_folder(self):

@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 import sys
 
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
@@ -8,23 +9,29 @@ sys.path.append(ROOT_PATH)
 from pandas import read_csv, DataFrame
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from datetime import datetime
+from math import sqrt
 
 from my_modules.csv_writer import csv_writer
 
-PATH = os.path.join(".", "sprint-2_forecast_automation")
+PATH = os.path.join(".", "sprint-2_arima_automation")
 os.chdir(PATH)
 
 OUTPUT_FOLDER = "output"
+execution_time_list = list()
+mae_list = list()
 mse_list = list()
+rmse_list = list()
 log_list = list()
 
 
 class arima_model:
     """Class that represents the structure of my automated ARIMA model"""
 
+    # Percentage of the train dataset
     TRAIN_SIZE = 0.66
+    start_time = time.time()
 
     """Resets the output folder"""
     try:
@@ -70,14 +77,18 @@ class arima_model:
                 self.history.append(obs)
                 self.file.write_line([str(prediction), str(obs)])
 
+            self.execution_time = time.time() - self.start_time
+            self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
-            mse_list.append([str(self.mse), f'"{self.name}"'])
-            # TODO: escolher a variavel a dar sort
-            mse_list.sort(key=lambda item: float(item[0]))
+            self.rmse = sqrt(self.mse)
             self.export_plot()
 
         except Exception as err:
-            log_list.append(f">> Model {self.name} not exported! {type(err).__name__}: {err}")
+            log_list.append(f">> Model {self.name} exported with an error! {type(err).__name__}: {err}")
+            self.execution_time = -1
+            self.mae = -1
+            self.mse = -1
+            self.rmse = -1
             self.file.close()
             shutil.rmtree(self.folder)
             pass
@@ -87,6 +98,18 @@ class arima_model:
             pass
 
         finally:
+            execution_time_list.append((str(self.execution_time), f'"{self.name}"'))
+            execution_time_list.sort(key=lambda line: float(line[0]))
+
+            mae_list.append((str(self.mae), f'"{self.name}"'))
+            mae_list.sort(key=lambda line: float(line[0]))
+
+            mse_list.append((str(self.mse), f'"{self.name}"'))
+            mse_list.sort(key=lambda line: float(line[0]))
+
+            rmse_list.append((str(self.rmse), f'"{self.name}"'))
+            rmse_list.sort(key=lambda line: float(line[0]))
+
             self.file.close()
             print(f"Model {self.name} finished.")
 
@@ -167,16 +190,40 @@ def arima_automated(
     return
 
 
+def export_execution_time_list():
+    """Exports the execution time rating list into a .csv file"""
+    time_file = csv_writer(os.path.join(OUTPUT_FOLDER, "execution_time_rating.csv"), ["Execution Time (sec)", "Model"])
+    time_file.write_at_once(execution_time_list)
+    time_file.close()
+    print("Time rating file finished.")
+
+
+def export_mae_list():
+    """Exports the mae rating list into a .csv file"""
+    mae_file = csv_writer(os.path.join(OUTPUT_FOLDER, "mae_rating.csv"), ["MAE", "Model"])
+    mae_file.write_at_once(mae_list)
+    mae_file.close()
+    print("MAE ranking file finished.")
+
+
 def export_mse_list():
-    """Exports the mse rating list to a .csv file"""
+    """Exports the mse rating list into a .csv file"""
     mse_file = csv_writer(os.path.join(OUTPUT_FOLDER, "mse_rating.csv"), ["MSE", "Model"])
     mse_file.write_at_once(mse_list)
     mse_file.close()
     print("MSE ranking file finished.")
 
 
+def export_rmse_list():
+    """Exports the rmse rating list into a .csv file"""
+    rmse_file = csv_writer(os.path.join(OUTPUT_FOLDER, "rmse_rating.csv"), ["RMSE", "Model"])
+    rmse_file.write_at_once(rmse_list)
+    rmse_file.close()
+    print("RMSE ranking file finished.")
+
+
 def export_log_file():
-    """Exports the log list to a .txt file"""
+    """Exports the log list into a .txt file"""
     log_file = open(os.path.join(OUTPUT_FOLDER, "log.txt"), "w")
     for line in log_list:
         log_file.write(line)
@@ -200,7 +247,10 @@ def init():
         return datetime.strptime(f"190{x}", "%Y-%m")
 
     arima_automated(filename="shampoo-sales.csv", date_parser=parser, p_range=[1, 6], d_range=[0, 4], q_range=[0, 4])
+    export_execution_time_list()
+    export_mae_list()
     export_mse_list()
+    export_rmse_list()
     export_log_file()
 
 

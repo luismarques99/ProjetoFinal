@@ -3,6 +3,7 @@ import shutil
 import time
 import sys
 
+# Adds the root folder to the sys path
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
 sys.path.append(ROOT_PATH)
 
@@ -19,10 +20,7 @@ PATH = os.path.join(".", "sprint-2_arima_automation")
 os.chdir(PATH)
 
 OUTPUT_FOLDER = "output"
-execution_time_list = list()
-mae_list = list()
-mse_list = list()
-rmse_list = list()
+ratings_list = list()
 log_list = list()
 
 
@@ -31,7 +29,8 @@ class arima_model:
 
     # Percentage of the train dataset
     TRAIN_SIZE = 0.66
-    start_time = time.time()
+
+    starting_time = time.time()
 
     """Resets the output folder"""
     try:
@@ -75,7 +74,7 @@ class arima_model:
                 self.predictions.append(prediction)
                 obs = self.test[t]
                 self.history.append(obs)
-                self.file.write_line([str(prediction), str(obs)])
+                self.file.write_line((str(prediction), str(obs)))
 
             self.export_plot()
 
@@ -91,25 +90,14 @@ class arima_model:
 
         else:
             log_list.append(f">> Model {self.name} exported with success.")
-            self.execution_time = time.time() - self.start_time
+            self.execution_time = time.time() - self.starting_time
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
             self.file.close()
 
         finally:
-            execution_time_list.append((str(self.execution_time), f'"{self.name}"'))
-            execution_time_list.sort(key=lambda line: float(line[0]))
-
-            mae_list.append((str(self.mae), f'"{self.name}"'))
-            mae_list.sort(key=lambda line: float(line[0]))
-
-            mse_list.append((str(self.mse), f'"{self.name}"'))
-            mse_list.sort(key=lambda line: float(line[0]))
-
-            rmse_list.append((str(self.rmse), f'"{self.name}"'))
-            rmse_list.sort(key=lambda line: float(line[0]))
-
+            ratings_list.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
 
     def create_folder(self):
@@ -135,7 +123,7 @@ class arima_model:
         Returns:
             file: file ready to write
         """
-        file_name = f"ARIMA({self.p},{self.d},{self.q}).csv"
+        file_name = f"{self.name}.csv"
         file_path = os.path.join(self.folder, file_name)
         file = csv_writer(file_path, header)
         return file
@@ -145,8 +133,8 @@ class arima_model:
         pyplot.plot(self.train, color="blue")
         pyplot.plot([None for i in self.train] + [x for x in self.test], color="green")
         pyplot.plot([None for i in self.train] + [x for x in self.predictions], color="red")
-        pyplot.gcf().canvas.set_window_title(f"ARIMA({self.p}, {self.d}, {self.q})")
-        pyplot.savefig(os.path.join(self.folder, f"ARIMA({self.p},{self.d},{self.q})-plot.png"))
+        pyplot.gcf().canvas.set_window_title(self.name)
+        pyplot.savefig(os.path.join(self.folder, f"{self.name}-plot.png"))
         pyplot.close()
 
 
@@ -186,39 +174,32 @@ def arima_automated(
         for d in list(range(d_range[0], d_range[-1])):
             for q in list(range(q_range[0], q_range[-1])):
                 arima_model(filename, date_parser, p, d, q)
-    return
 
 
-def export_execution_time_list():
-    """Exports the execution time rating list into a .csv file"""
-    time_file = csv_writer(os.path.join(OUTPUT_FOLDER, "execution_time_rating.csv"), ["Execution Time (sec)", "Model"])
-    time_file.write_at_once(execution_time_list)
-    time_file.close()
-    print("Time rating file finished.")
+# 1 - Execution time (sec)
+# 2 - MAE
+# 3 - MSE
+# 4 - RMSE
+def export_ratings_list(order: int = 0):
+    """Exports the ratings list into a .csv file
 
-
-def export_mae_list():
-    """Exports the mae rating list into a .csv file"""
-    mae_file = csv_writer(os.path.join(OUTPUT_FOLDER, "mae_rating.csv"), ["MAE", "Model"])
-    mae_file.write_at_once(mae_list)
-    mae_file.close()
-    print("MAE ranking file finished.")
-
-
-def export_mse_list():
-    """Exports the mse rating list into a .csv file"""
-    mse_file = csv_writer(os.path.join(OUTPUT_FOLDER, "mse_rating.csv"), ["MSE", "Model"])
-    mse_file.write_at_once(mse_list)
-    mse_file.close()
-    print("MSE ranking file finished.")
-
-
-def export_rmse_list():
-    """Exports the rmse rating list into a .csv file"""
-    rmse_file = csv_writer(os.path.join(OUTPUT_FOLDER, "rmse_rating.csv"), ["RMSE", "Model"])
-    rmse_file.write_at_once(rmse_list)
-    rmse_file.close()
-    print("RMSE ranking file finished.")
+    Args:
+        order (int, optional): Order factor of the ratings list (1. Execution time (sec) / 2. MAE / 3. MSE / 4. RMSE). Defaults to 0.
+    """
+    ratings_list.sort(key=lambda line: float(line[order]))
+    ratings_file = csv_writer(os.path.join(OUTPUT_FOLDER, "model_ratings.csv"), ["Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"])
+    ratings_file.write_at_once(ratings_list)
+    ratings_file.close()
+    if order == 1:
+        print("Ratings list file finished. Ordered by Execution Time (sec).")
+    elif order == 2:
+        print("Ratings list file finished. Ordered by MAE.")
+    elif order == 3:
+        print("Ratings list file finished. Ordered by MSE.")
+    elif order == 4:
+        print("Ratings list file finished. Ordered by RMSE.")
+    else:
+        print("Ratings list file finished. Ordered by the model name.")
 
 
 def export_log_file():
@@ -246,10 +227,7 @@ def init():
         return datetime.strptime(f"190{x}", "%Y-%m")
 
     arima_automated(filename="shampoo-sales.csv", date_parser=parser, p_range=[1, 6], d_range=[0, 4], q_range=[0, 4])
-    export_execution_time_list()
-    export_mae_list()
-    export_mse_list()
-    export_rmse_list()
+    export_ratings_list(2)
     export_log_file()
 
 

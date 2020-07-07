@@ -4,13 +4,14 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import TimeSeriesSplit
 from statsmodels.tsa.arima_model import ARIMA
-from pandas import DataFrame, Series, concat, read_csv
-from pandas.plotting import autocorrelation_plot
+from pandas import DataFrame, concat, read_csv
 from numpy import array, concatenate
 from math import sqrt
 from matplotlib import pyplot
-from pathlib import Path
-from datetime import datetime
+
+# from pandas.plotting import autocorrelation_plot
+# from pathlib import Path
+# from datetime import datetime
 
 PATH = os.path.join(".", "sprint-3_arima_variations")
 os.chdir(PATH)
@@ -97,6 +98,7 @@ def run_tests(train, test, trainExtra, testExtra, scaler, arima_parameters, num_
 
                 ## Show
                 pyplot.show()
+                
                 raw_results = {"predicted": output_unscaled, "real": test_unscaled}
                 print(raw_results)
                 results_dataset_raw = DataFrame(raw_results)
@@ -146,13 +148,13 @@ results_dataset = DataFrame(columns=columns)
 
 for location in locations:
 
-    dt1 = read_csv("N14Bosch_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"],)
+    dt1 = read_csv("N14Bosch_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"])
     dt1Extra = dt1.filter(items=["precipitation", "week_day"])
     dt1Extra = dt1Extra.values
 
-    dt1 = dt1[["speed_diff"]]
+    dt1 = dt1[("speed_diff")]
     scaler = MinMaxScaler()
-    dt1[["speed_diff"]] = scaler.fit_transform(dt1[["speed_diff"]])
+    dt1[("speed_diff")] = scaler.fit_transform(dt1[("speed_diff")])
     dt1 = dt1.speed_diff.values
 
     tscv = TimeSeriesSplit(n_splits=3)

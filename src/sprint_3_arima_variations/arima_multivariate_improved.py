@@ -7,16 +7,10 @@ import sys
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
 sys.path.append(ROOT_PATH)
 
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import TimeSeriesSplit
-from statsmodels.tsa.arima_model import ARIMA
-from pandas import DataFrame, concat, read_csv
-from numpy import array, concatenate
-from math import sqrt
+from pandas import DataFrame, read_csv
 from matplotlib import pyplot
 
-from my_modules.csv_writer import csv_writer
+from src.my_modules.csv_writer import csv_writer
 
 PATH = os.path.join(".", "sprint-3_arima_variations")
 os.chdir(PATH)

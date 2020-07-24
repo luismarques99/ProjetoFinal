@@ -3,16 +3,16 @@ import shutil
 import time
 import sys
 
-"""Adds the root folder to the sys path"""
-ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
-sys.path.append(ROOT_PATH)
-
 from pandas import read_csv, DataFrame
 from matplotlib import pyplot
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from datetime import datetime
 from math import sqrt
+
+"""Adds the root folder to the sys path"""
+ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)   ))
+sys.path.append(ROOT_PATH)
 
 from src.my_modules.csv_writer import csv_writer
 

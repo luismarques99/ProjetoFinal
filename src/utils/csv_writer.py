@@ -1,4 +1,4 @@
-class csv_writer:
+class CSVWriter:
     """Class that represents the structure of a CSV file writer"""
 
     def __init__(self, filename="", header=list()):

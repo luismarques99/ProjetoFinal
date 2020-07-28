@@ -10,22 +10,23 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from datetime import datetime
 from math import sqrt
 
+ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
+PATH = os.path.join(ROOT_PATH, "src", "sprint_2_arima_automation")
+
 """Adds the root folder to the sys path"""
-ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)   ))
 sys.path.append(ROOT_PATH)
 
-from src.my_modules.csv_writer import csv_writer
-
 """Sets the current folder as the current working directory"""
-PATH = os.path.join(ROOT_PATH, "src", "sprint_2_arima_automation")
 os.chdir(PATH)
+
+from src.utils.csv_writer import CSVWriter
 
 OUTPUT_FOLDER = "output"
 ratings_list = list()
 log_list = list()
 
 
-class arima_model:
+class ArimaModel:
     """Class that represents the structure of my automated ARIMA model"""
 
     """Percentage os the train dataset"""
@@ -39,7 +40,7 @@ class arima_model:
     except FileNotFoundError:
         pass
 
-    def __init__(self, filename: str, date_parser, p: int, d: int, q: int):
+    def __init__(self, filename: str, arima_parameters: tuple, date_parser=None):
         """Creates an instance of an ARIMA model
 
         Args:
@@ -49,26 +50,25 @@ class arima_model:
             d (int): number of times that the raw observations are differenced
             q (int): size of the moving average window
         """
-        self.p = p
-        self.d = d
-        self.q = q
+
+        self.arima_parameters = arima_parameters
+        self.set_model_name()
         self.series = set_series(filename, date_parser)
-        self.name = f"ARIMA({self.p},{self.d},{self.q})"
         self.values = self.series.values
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
         self.train = self.values[0: self.train_size]
         self.test = self.values[self.train_size: len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
-        self.folder = self.create_folder()
-        self.file = self.create_file(["Predict", self.series.name])
+        self.set_output_folder()
+        self.set_csv_file(["Predict", self.series.name])
         self.execute()
 
     def execute(self):
         """Executes the model"""
         try:
             for t in range(len(self.test)):
-                model = ARIMA(self.history, order=(self.p, self.d, self.q))
+                model = ARIMA(self.history, order=self.arima_parameters)
                 model_fit = model.fit(disp=0)
                 output = model_fit.forecast()
                 prediction = output[0][0]
@@ -102,33 +102,31 @@ class arima_model:
                 (f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
 
-    def create_folder(self):
-        """Creates a folder for the model
+    def set_model_name(self):
+        """Sets the name of the model"""
+        self.name = "ARIMA("
+        for index in self.arima_parameters:
+            self.name += f"{str(index)},"
+        self.name = self.name[:-1]
+        self.name += ")"
 
-        Returns:
-            string: folder path
-        """
-        folder = os.path.join(OUTPUT_FOLDER, self.name)
+    def set_output_folder(self):
+        """Creates and sets an output folder for the model"""
+        self.folder = os.path.join(OUTPUT_FOLDER, self.name)
         try:
-            os.mkdir(folder)
+            os.mkdir(self.folder)
         except FileNotFoundError:
             os.mkdir(OUTPUT_FOLDER)
-            os.mkdir(folder)
+            os.mkdir(self.folder)
         except FileExistsError:
-            shutil.rmtree(folder)
-            os.mkdir(folder)
-        return folder
+            shutil.rmtree(self.folder)
+            os.mkdir(self.folder)
 
-    def create_file(self, header: list()):
-        """Creates and opens a writing file for the model
-
-        Returns:
-            file: file ready to write
-        """
+    def set_csv_file(self, header: list):
+        """Creates sets a writing csv file for the model"""
         file_name = f"{self.name}.csv"
         file_path = os.path.join(self.folder, file_name)
-        file = csv_writer(file_path, header)
-        return file
+        self.file = CSVWriter(file_path, header)
 
     def export_plot(self):
         """Exports the plot to a folder"""
@@ -159,25 +157,16 @@ def set_series(filename: str, date_parser=None):
     return series
 
 
-def arima_automated(filename: str,
-                    date_parser=None,
-                    p_range: list() = [1, 2],
-                    d_range: list() = [0, 1],
-                    q_range: list() = [0, 1]):
-    """ARIMA model automated
+def run_arima_model(filename: str, arima_parameters_list: list, date_parser=None):
+    """Runs ARIMA model
 
     Args:
         filename (str): name of the dataset file to import to the model.
+        arima_parameters_list (list): list of all the tuples of parameters of the ARIMA model.
         date_parser (function, optional): function to parse the date. Defaults to None.
-        p_range (list, optional): range of values for the number of lagged observations. Defaults to [1, 2].
-        d_range (list, optional): range of values for the number of times that the raw observations are differenced.
-                                  Defaults to [0, 1].
-        q_range (list, optional): range of values for the size of the moving average window. Defaults to [0, 1].
     """
-    for p in list(range(p_range[0], p_range[-1])):
-        for d in list(range(d_range[0], d_range[-1])):
-            for q in list(range(q_range[0], q_range[-1])):
-                arima_model(filename, date_parser, p, d, q)
+    for arima_parameters in arima_parameters_list:
+        ArimaModel(filename, arima_parameters, date_parser)
 
 
 # 1 - Execution time (sec)
@@ -192,7 +181,7 @@ def export_ratings_list(order: int = 0):
                                (1. Execution time (sec) / 2. MAE / 3. MSE / 4. RMSE). Defaults to 0.
     """
     ratings_list.sort(key=lambda line: float(line[order]))
-    ratings_file = csv_writer(os.path.join(OUTPUT_FOLDER, "model_ratings.csv"),
+    ratings_file = CSVWriter(os.path.join(OUTPUT_FOLDER, "model_ratings.csv"),
                               ["Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"])
     ratings_file.write_at_once(ratings_list)
     ratings_file.close()
@@ -221,7 +210,7 @@ def export_log_file():
 def init():
     """Main function"""
 
-    def parser(x):
+    def parser(x: int):
         """Parses the dates from shampoo-sales.csv dataset
 
         Args:
@@ -232,6 +221,12 @@ def init():
         """
         return datetime.strptime(f"190{x}", "%Y-%m")
 
-    arima_automated(filename="shampoo-sales.csv", date_parser=parser, p_range=[1, 6], d_range=[0, 4], q_range=[0, 4])
+    arima_parameters_list = list()
+    for p in range(1, 6):
+        for d in range(0, 4):
+            for q in range(0, 4):
+                arima_parameters_list.append((p, d, q))
+
+    run_arima_model(filename="shampoo-sales.csv", arima_parameters_list=arima_parameters_list, date_parser=parser)
     export_ratings_list(2)
     export_log_file()

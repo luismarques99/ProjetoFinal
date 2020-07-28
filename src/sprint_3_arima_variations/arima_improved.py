@@ -2,6 +2,7 @@ import os
 import shutil
 import time
 import sys
+import numpy
 
 from pandas import read_csv, DataFrame
 from matplotlib import pyplot
@@ -11,7 +12,7 @@ from datetime import datetime
 from math import sqrt
 
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
-PATH = os.path.join(ROOT_PATH, "src", "sprint_2_arima_automation")
+PATH = os.path.join(ROOT_PATH, "src", "sprint_3_arima_variations")
 
 """Adds the root folder to the sys path"""
 sys.path.append(ROOT_PATH)
@@ -26,7 +27,7 @@ ratings_list = list()
 log_list = list()
 
 
-class ArimaMultivariateImprovedModel:
+class ArimaImprovedModel:
     """Class that represents the structure of my automated ARIMA model"""
 
     """Percentage os the train dataset"""
@@ -40,7 +41,11 @@ class ArimaMultivariateImprovedModel:
     except FileNotFoundError:
         pass
 
-    def __init__(self, filename: str, arima_parameters: tuple, date_parser=None):
+    def __init__(self, filename: str,
+                 arima_parameters: tuple,
+                 num_predictions: int = 0,
+                 predictions_size: float = 0,
+                 date_parser=None):
         """Creates an instance of an ARIMA model
 
         Args:
@@ -53,8 +58,10 @@ class ArimaMultivariateImprovedModel:
 
         self.arima_parameters = arima_parameters
         self.set_model_name()
+        # FIXME: Alguns valores nulo nao estao a deixar alguns modelos prosseguirem
         self.series = set_series(filename, date_parser)
-        self.values = self.series.values
+        self.values = self.series.values.copy()
+        # TODO: Opcao de escolha do train_size - numero de previsoes ou percentagem do dataset
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
         self.train = self.values[0: self.train_size]
         self.test = self.values[self.train_size: len(self.values)]
@@ -81,6 +88,7 @@ class ArimaMultivariateImprovedModel:
 
         except Exception as err:
             log_list.append(f">> Model {self.name} exported with an error! {type(err).__name__}: {err}")
+            print(f">> Model {self.name} exported with an error! {type(err).__name__}: {err}")
             self.execution_time = -1
             self.mae = -1
             self.mse = -1
@@ -130,11 +138,41 @@ class ArimaMultivariateImprovedModel:
 
     def export_plot(self):
         """Exports the plot to a folder"""
-        pyplot.plot(self.train, color="blue")
-        pyplot.plot([None for i in self.train] + [x for x in self.test], color="green")
-        pyplot.plot([None for i in self.train] + [x for x in self.predictions], color="red")
+        timesteps = numpy.arange(len(self.values))
+        # train_values_mask = numpy.isfinite(self.train)
+        # train_series  = self.train[self.train.notnull()]
+        real_values_series = [*[None for i in self.train[:-1]],
+                              *[self.train[len(self.train) - 1]],
+                              *[x for x in self.test]]
+        # real_values_mask = numpy.isfinite(real_values_series)
+        prediction_values_series = [*[None for i in self.train], *[x for x in self.predictions]]
+        # prediction_values_mask = numpy.isfinite(prediction_values_series)
+
+        pyplot.plot(timesteps,
+                    real_values_series,
+                    color="green",
+                    marker="^",
+                    linestyle="-",
+                    label="Real values")
+        pyplot.plot(timesteps,
+                    prediction_values_series,
+                    color="red",
+                    marker="X",
+                    linestyle="-",
+                    label="Predictions")
+        pyplot.plot(numpy.arange(len(self.train)),
+                    self.train,
+                    color="blue",
+                    marker="o",
+                    linestyle="-",
+                    label="Train values")
+        pyplot.ylabel(self.series.name)
+        pyplot.xlabel("Timesteps")
+        pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, 1.0))
+        pyplot.grid(alpha=0.5, color="#000000", linestyle=":")
         pyplot.gcf().canvas.set_window_title(self.name)
-        pyplot.savefig(os.path.join(self.folder, f"{self.name}-plot.png"))
+        pyplot.gcf().set_size_inches(12, 7)
+        pyplot.savefig(os.path.join(self.folder, f"{self.name}_plot.png"), format="png", dpi=300)
         pyplot.close()
 
 
@@ -166,7 +204,7 @@ def run_arima_model(filename: str, arima_parameters_list: list, date_parser=None
         date_parser (function, optional): function to parse the date. Defaults to None.
     """
     for arima_parameters in arima_parameters_list:
-        ArimaMultivariateImprovedModel(filename, arima_parameters, date_parser)
+        ArimaImprovedModel(filename=filename, arima_parameters=arima_parameters, date_parser=date_parser)
 
 
 # 1 - Execution time (sec)
@@ -182,7 +220,7 @@ def export_ratings_list(order: int = 0):
     """
     ratings_list.sort(key=lambda line: float(line[order]))
     ratings_file = CSVWriter(os.path.join(OUTPUT_FOLDER, "model_ratings.csv"),
-                              ["Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"])
+                             ["Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"])
     ratings_file.write_at_once(ratings_list)
     ratings_file.close()
     if order == 1:
@@ -221,7 +259,7 @@ def init():
         """
         return datetime.strptime(f"190{x}", "%Y-%m")
 
-    arima_parameters_list = []
+    arima_parameters_list = list()
     for p in range(1, 6):
         for d in range(0, 4):
             for q in range(0, 4):

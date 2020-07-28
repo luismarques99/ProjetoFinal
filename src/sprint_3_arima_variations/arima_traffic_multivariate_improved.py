@@ -5,7 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import TimeSeriesSplit
 from statsmodels.tsa.arima_model import ARIMA
 from pandas import DataFrame, concat, read_csv
-from numpy import array, concatenate
+from numpy import concatenate
 from math import sqrt
 from matplotlib import pyplot
 
@@ -13,10 +13,12 @@ from matplotlib import pyplot
 # from pathlib import Path
 # from datetime import datetime
 
-PATH = os.path.join(".", "sprint-3_arima_variations")
+ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
+PATH = os.path.join(ROOT_PATH, "src", "sprint_3_arima_variations")
 os.chdir(PATH)
 
 OUTPUT_FOLDER = "results_arimax_2"
+
 
 # Date Parser
 # def parser(x):
@@ -39,17 +41,19 @@ def run_tests(train, test, trainExtra, testExtra, scaler, arima_parameters, num_
             real_results = test[s_seq:]
             real_resultsExtra = testExtra[s_seq:]
         else:
-            real_results = test[s_seq : s_seq + num_predictions]
-            real_resultsExtra = testExtra[s_seq : s_seq + num_predictions]
+            real_results = test[s_seq: s_seq + num_predictions]
+            real_resultsExtra = testExtra[s_seq: s_seq + num_predictions]
 
         ## Create Tests for next
         for arima_parameter in arima_parameters:
             print(f"Results for ARIMAX with window {arima_parameter[0]}")
             try:
                 broke = 0
-                model = ARIMA(history, order=(arima_parameter[0], arima_parameter[1], arima_parameter[2]), exog=historyExtra)
+                model = ARIMA(history, order=(arima_parameter[0], arima_parameter[1], arima_parameter[2]),
+                              exog=historyExtra)
                 model_fit = model.fit(disp=0)
-                output, output_stderr, output_conf_interval = model_fit.forecast(steps=num_predictions, exog=real_resultsExtra)
+                output, output_stderr, output_conf_interval = model_fit.forecast(steps=num_predictions,
+                                                                                 exog=real_resultsExtra)
                 output_unscaled = scaler.inverse_transform([output])[0]
                 test_unscaled = scaler.inverse_transform([real_results])[0]
 
@@ -77,7 +81,8 @@ def run_tests(train, test, trainExtra, testExtra, scaler, arima_parameters, num_
                 # pyplot.plot(test_unscaled, color='black')
                 # pyplot.plot(output_unscaled, color='red')
                 pyplot.plot(range(len(test_unscaled)), test_unscaled, marker="H", color="black", label="Real Values")
-                pyplot.plot(range(len(output_unscaled)), output_unscaled, marker="s", color="red", label="Blind Prediction")
+                pyplot.plot(range(len(output_unscaled)), output_unscaled, marker="s", color="red",
+                            label="Blind Prediction")
                 pyplot.ylabel("Speed Difference")
                 pyplot.xlabel("Timesteps")
                 pyplot.grid(which="major", alpha=0.3, color="#666666", linestyle="-")
@@ -98,7 +103,7 @@ def run_tests(train, test, trainExtra, testExtra, scaler, arima_parameters, num_
 
                 ## Show
                 pyplot.show()
-                
+
                 raw_results = {"predicted": output_unscaled, "real": test_unscaled}
                 print(raw_results)
                 results_dataset_raw = DataFrame(raw_results)
@@ -148,7 +153,10 @@ results_dataset = DataFrame(columns=columns)
 
 for location in locations:
 
-    dt1 = read_csv("N14Bosch_2019-04.csv", infer_datetime_format=True, parse_dates=["timestep"], index_col=["timestep"])
+    dt1 = read_csv("N14Bosch_2019-04.csv",
+                   infer_datetime_format=True,
+                   parse_dates=["timestep"],
+                   index_col=["timestep"])
     dt1Extra = dt1.filter(items=["precipitation", "week_day"])
     dt1Extra = dt1Extra.values
 
@@ -166,23 +174,19 @@ for location in locations:
         train1, test1 = dt1[train_index], dt1[test_index]
         train1Extra, test1Extra = dt1Extra[train_index], dt1Extra[test_index]
         for num_predictions in predictions:
-
-            results = run_tests(
-                train1.copy(),
-                test1.copy(),
-                train1Extra.copy(),
-                test1Extra.copy(),
-                scaler,
-                arima_windows,
-                num_predictions,
-                location,
-                data_split,
-            )
+            results = run_tests(train1.copy(),
+                                test1.copy(),
+                                train1Extra.copy(),
+                                test1Extra.copy(),
+                                scaler,
+                                arima_windows,
+                                num_predictions,
+                                location,
+                                data_split)
 
             results_dataset = concat([results_dataset, results], ignore_index=True)
 
         data_split += 1
-
 
 try:
     results_dataset.to_csv(os.path.join(OUTPUT_FOLDER, "ARIMA_results_summary.csv"), index=False)

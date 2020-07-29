@@ -58,9 +58,8 @@ class ArimaImprovedModel:
 
         self.arima_parameters = arima_parameters
         self.set_model_name()
-        # FIXME: Alguns valores nulo nao estao a deixar alguns modelos prosseguirem
         self.series = set_series(filename, date_parser)
-        self.values = self.series.values.copy()
+        self.values = self.series.values
         # TODO: Opcao de escolha do train_size - numero de previsoes ou percentagem do dataset
         self.train_size = int(len(self.values) * self.TRAIN_SIZE)
         self.train = self.values[0: self.train_size]
@@ -139,14 +138,17 @@ class ArimaImprovedModel:
     def export_plot(self):
         """Exports the plot to a folder"""
         timesteps = numpy.arange(len(self.values))
-        # train_values_mask = numpy.isfinite(self.train)
-        # train_series  = self.train[self.train.notnull()]
-        real_values_series = [*[None for i in self.train[:-1]],
-                              *[self.train[len(self.train) - 1]],
-                              *[x for x in self.test]]
-        # real_values_mask = numpy.isfinite(real_values_series)
-        prediction_values_series = [*[None for i in self.train], *[x for x in self.predictions]]
-        # prediction_values_mask = numpy.isfinite(prediction_values_series)
+
+        real_values_series = [
+            *[None for i in self.train[:-1]],
+            *[self.train[len(self.train) - 1]],
+            *[x for x in self.test]
+        ]
+
+        prediction_values_series = [
+            *[None for i in self.train],
+            *[x for x in self.predictions]
+        ]
 
         pyplot.plot(timesteps,
                     real_values_series,
@@ -169,7 +171,7 @@ class ArimaImprovedModel:
         pyplot.ylabel(self.series.name)
         pyplot.xlabel("Timesteps")
         pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, 1.0))
-        pyplot.grid(alpha=0.5, color="#000000", linestyle=":")
+        pyplot.grid(which="major", alpha=0.5)
         pyplot.gcf().canvas.set_window_title(self.name)
         pyplot.gcf().set_size_inches(12, 7)
         pyplot.savefig(os.path.join(self.folder, f"{self.name}_plot.png"), format="png", dpi=300)
@@ -192,7 +194,7 @@ def set_series(filename: str, date_parser=None):
         series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=date_parser)
     except FileNotFoundError as err:
         print(f"File Not Found ('{filename}'): {err}")
-    return series
+    return series.copy()
 
 
 def run_arima_model(filename: str, arima_parameters_list: list, date_parser=None):

@@ -31,7 +31,9 @@ pass your own start_params.
 >> Model ARIMA(2,0,0) exported with success.
 >> Model ARIMA(2,0,1) exported with an error! LinAlgError: SVD did not converge
 >> Model ARIMA(2,0,2) exported with an error! LinAlgError: SVD did not converge
->> Model ARIMA(2,0,3) exported with an error! LinAlgError: SVD did not converge
+>> Model ARIMA(2,0,3) exported with an error! ValueError: The computed initial AR coefficients are not stationary
+You should induce stationarity, choose a different model order, or you can
+pass your own start_params.
 >> Model ARIMA(2,1,0) exported with success.
 >> Model ARIMA(2,1,1) exported with success.
 >> Model ARIMA(2,1,2) exported with an error! ValueError: The computed initial MA coefficients are not invertible
@@ -73,9 +75,7 @@ pass your own start_params.
 >> Model ARIMA(3,2,2) exported with an error! ValueError: The computed initial MA coefficients are not invertible
 You should induce invertibility, choose a different model order, or you can
 pass your own start_params.
->> Model ARIMA(3,2,3) exported with an error! ValueError: The computed initial MA coefficients are not invertible
-You should induce invertibility, choose a different model order, or you can
-pass your own start_params.
+>> Model ARIMA(3,2,3) exported with an error! LinAlgError: SVD did not converge
 >> Model ARIMA(3,3,0) exported with an error! ValueError: d > 2 is not supported
 >> Model ARIMA(3,3,1) exported with an error! ValueError: d > 2 is not supported
 >> Model ARIMA(3,3,2) exported with an error! ValueError: d > 2 is not supported
@@ -97,8 +97,8 @@ pass your own start_params.
 >> Model ARIMA(4,2,2) exported with an error! ValueError: The computed initial MA coefficients are not invertible
 You should induce invertibility, choose a different model order, or you can
 pass your own start_params.
->> Model ARIMA(4,2,3) exported with an error! ValueError: The computed initial MA coefficients are not invertible
-You should induce invertibility, choose a different model order, or you can
+>> Model ARIMA(4,2,3) exported with an error! ValueError: The computed initial AR coefficients are not stationary
+You should induce stationarity, choose a different model order, or you can
 pass your own start_params.
 >> Model ARIMA(4,3,0) exported with an error! ValueError: d > 2 is not supported
 >> Model ARIMA(4,3,1) exported with an error! ValueError: d > 2 is not supported
@@ -123,8 +123,8 @@ pass your own start_params.
 >> Model ARIMA(5,2,2) exported with an error! ValueError: The computed initial MA coefficients are not invertible
 You should induce invertibility, choose a different model order, or you can
 pass your own start_params.
->> Model ARIMA(5,2,3) exported with an error! ValueError: The computed initial MA coefficients are not invertible
-You should induce invertibility, choose a different model order, or you can
+>> Model ARIMA(5,2,3) exported with an error! ValueError: The computed initial AR coefficients are not stationary
+You should induce stationarity, choose a different model order, or you can
 pass your own start_params.
 >> Model ARIMA(5,3,0) exported with an error! ValueError: d > 2 is not supported
 >> Model ARIMA(5,3,1) exported with an error! ValueError: d > 2 is not supported

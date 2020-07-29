@@ -30,9 +30,6 @@ log_list = list()
 class ArimaImprovedModel:
     """Class that represents the structure of my automated ARIMA model"""
 
-    """Percentage os the train dataset"""
-    TRAIN_SIZE = 0.66
-
     starting_time = time.time()
 
     """Resets the output folder"""
@@ -60,8 +57,10 @@ class ArimaImprovedModel:
         self.set_model_name()
         self.series = set_series(filename, date_parser)
         self.values = self.series.values
-        # TODO: Opcao de escolha do train_size - numero de previsoes ou percentagem do dataset
-        self.train_size = int(len(self.values) * self.TRAIN_SIZE)
+        if num_predictions != 0:
+            self.train_size = len(self.values) - num_predictions
+        else:
+            self.train_size = int(len(self.values) * (1 - predictions_size))
         self.train = self.values[0: self.train_size]
         self.test = self.values[self.train_size: len(self.values)]
         self.history = [x for x in self.train]
@@ -206,7 +205,11 @@ def run_arima_model(filename: str, arima_parameters_list: list, date_parser=None
         date_parser (function, optional): function to parse the date. Defaults to None.
     """
     for arima_parameters in arima_parameters_list:
-        ArimaImprovedModel(filename=filename, arima_parameters=arima_parameters, date_parser=date_parser)
+        ArimaImprovedModel(filename=filename,
+                           arima_parameters=arima_parameters,
+                           num_predictions=12,
+                           predictions_size=0.34,
+                           date_parser=date_parser)
 
 
 # 1 - Execution time (sec)

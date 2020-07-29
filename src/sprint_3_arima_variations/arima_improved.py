@@ -30,8 +30,6 @@ log_list = list()
 class ArimaImprovedModel:
     """Class that represents the structure of my automated ARIMA model"""
 
-    starting_time = time.time()
-
     """Resets the output folder"""
     try:
         shutil.rmtree(OUTPUT_FOLDER)
@@ -71,6 +69,7 @@ class ArimaImprovedModel:
 
     def execute(self):
         """Executes the model"""
+        self.starting_time = time.time()
         try:
             for t in range(len(self.test)):
                 model = ARIMA(self.history, order=self.arima_parameters)
@@ -212,32 +211,37 @@ def run_arima_model(filename: str, arima_parameters_list: list, date_parser=None
                            date_parser=date_parser)
 
 
-# 1 - Execution time (sec)
-# 2 - MAE
-# 3 - MSE
-# 4 - RMSE
-def export_ratings_list(order: int = 0):
-    """Exports the ratings list into a .csv file
+def export_ratings_list(order: str):
+    """Exports the ratings list into a .csv file ordered by the parameter chosen
 
     Args:
-        order (int, optional): Order factor of the ratings list
-                               (1. Execution time (sec) / 2. MAE / 3. MSE / 4. RMSE). Defaults to 0.
+        order (str, optional): Order factor of the ratings list. ("execution time", "mae", "mse" or "rmse")
     """
-    ratings_list.sort(key=lambda line: float(line[order]))
+    order = order.lower()
+    if order == "execution time":
+        order_num = 1
+        order_name = "Execution Time (sec)"
+    elif order == "mae":
+        order_num = 2
+        order_name = "MAE"
+    elif order == "mse":
+        order_num = 3
+        order_name = "MSE"
+    elif order == "rmse":
+        order_num = 4
+        order_name = "RMSE"
+    else:
+        order_num = 0
+        order_name = "Model Name"
+
+    ratings_list.sort(key=lambda line: float(line[order_num]))
+
     ratings_file = CSVWriter(os.path.join(OUTPUT_FOLDER, "model_ratings.csv"),
                              ["Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"])
     ratings_file.write_at_once(ratings_list)
     ratings_file.close()
-    if order == 1:
-        print("Ratings list file finished. Ordered by Execution Time (sec).")
-    elif order == 2:
-        print("Ratings list file finished. Ordered by MAE.")
-    elif order == 3:
-        print("Ratings list file finished. Ordered by MSE.")
-    elif order == 4:
-        print("Ratings list file finished. Ordered by RMSE.")
-    else:
-        print("Ratings list file finished. Ordered by the model name.")
+
+    print(f"Ratings list file finished. Ordered by {order_name}.")
 
 
 def export_log_file():
@@ -271,5 +275,5 @@ def init():
                 arima_parameters_list.append((p, d, q))
 
     run_arima_model(filename="shampoo-sales.csv", arima_parameters_list=arima_parameters_list, date_parser=parser)
-    export_ratings_list(2)
+    export_ratings_list("mse")
     export_log_file()

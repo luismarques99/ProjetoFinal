@@ -32,8 +32,6 @@ class ArimaModel:
     """Percentage os the train dataset"""
     TRAIN_SIZE = 0.66
 
-    starting_time = time.time()
-
     """Resets the output folder"""
     try:
         shutil.rmtree(OUTPUT_FOLDER)
@@ -66,6 +64,7 @@ class ArimaModel:
 
     def execute(self):
         """Executes the model"""
+        self.starting_time = time.time()
         try:
             for t in range(len(self.test)):
                 model = ARIMA(self.history, order=self.arima_parameters)

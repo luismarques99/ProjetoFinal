@@ -45,6 +45,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
                 broke = 0
                 model = ARIMA(history, order=(arima_parameter[0], arima_parameter[1], arima_parameter[2]))
                 model_fit = model.fit(disp=0)
+                # TODO: DUVIDA - Qual a diferença entre estes outputs e os que eu tenho na minha classe?
                 output, output_stderr, output_conf_interval = model_fit.forecast(steps=num_predictions)
                 output_unscaled = scaler.inverse_transform([output])[0]
                 test_unscaled = scaler.inverse_transform([real_results])[0]
@@ -95,6 +96,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
                     os.mkdir(OUTPUT_FOLDER)
                     pyplot.savefig(figure_name)
 
+                # TODO: Continuar aqui...
                 ## Show
                 pyplot.show()
                 raw_results = {"predicted": output_unscaled, "real": test_unscaled}

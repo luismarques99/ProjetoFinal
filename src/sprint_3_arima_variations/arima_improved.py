@@ -40,44 +40,57 @@ class ArimaImprovedModel:
                  arima_parameters: tuple,
                  num_predictions: int = 0,
                  predictions_size: float = 0,
-                 date_parser=None):
+                 date_parser: datetime = None):
         """Creates an instance of an ARIMA model
 
         Args:
-            filename (string): name of the file to create the model
-            date_parser (function): function to parse the date
-            p (int): number of lagged observations
-            d (int): number of times that the raw observations are differenced
-            q (int): size of the moving average window
+            filename (string): name of the file to create the model.
+            arima_parameters (tuple): tuple with the parameters for the model.
+            num_predictions (int, optional): number of predictions of the model. If num_predictions is different than
+            zero, predictions_size is not needed. Defaults to 0.
+            predictions_size (float, optional): percentage of the test dataset (from 0 to 1). Only needed when
+            num_predictions is different than zero. Defaults to 0.
+            date_parser (datetime, optional): function to parse the date. Defaults to None.
         """
-
+        # FIXME: DUVIDA - é necessário instanciar as variaveis todas no inicio antes de utiliza-las?
+        # FIXME: Exemplo: name, starting_time, execution_time, ...
         self.arima_parameters = arima_parameters
-        self.set_model_name()
+        self.name = str()
         self.series = set_series(filename, date_parser)
         self.values = self.series.values
         if num_predictions != 0:
             self.train_size = len(self.values) - num_predictions
         else:
             self.train_size = int(len(self.values) * (1 - predictions_size))
+        self.num_predictions = len(self.values) - self.train_size
         self.train = self.values[0: self.train_size]
         self.test = self.values[self.train_size: len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
+        self.starting_time = float()
+        self.execution_time = float()
+        self.mae = float()
+        self.mse = float()
+        self.rmse = float()
+        self.folder = str()
+        self.file = None
+        self.set_model_name()
         self.set_output_folder()
-        self.set_csv_file(["Predict", self.series.name])
+        self.set_csv_file(("Predict", self.series.name))
         self.execute()
 
     def execute(self):
         """Executes the model"""
         self.starting_time = time.time()
         try:
-            for t in range(len(self.test)):
+            for timestep in range(self.num_predictions):
                 model = ARIMA(self.history, order=self.arima_parameters)
                 model_fit = model.fit(disp=0)
+                # TODO: DUVIDA - Qual a diferença entre estes outputs e os que eu tenho na minha classe?
                 output = model_fit.forecast()
                 prediction = output[0][0]
                 self.predictions.append(prediction)
-                obs = self.test[t]
+                obs = self.test[timestep]
                 self.history.append(obs)
                 self.file.write_line((str(prediction), str(obs)))
 
@@ -85,7 +98,7 @@ class ArimaImprovedModel:
 
         except Exception as err:
             log_list.append(f">> Model {self.name} exported with an error! {type(err).__name__}: {err}")
-            print(f">> Model {self.name} exported with an error! {type(err).__name__}: {err}")
+            # print(f">> Model {self.name} exported with an error! {type(err).__name__}: {err}")
             self.execution_time = -1
             self.mae = -1
             self.mse = -1
@@ -104,7 +117,14 @@ class ArimaImprovedModel:
 
         finally:
             ratings_list.append(
-                (f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
+                (
+                    f'"{self.name}"',
+                    str(self.execution_time),
+                    str(self.mae),
+                    str(self.mse),
+                    str(self.rmse)
+                )
+            )
             print(f"Model {self.name} finished.")
 
     def set_model_name(self):
@@ -127,7 +147,7 @@ class ArimaImprovedModel:
             shutil.rmtree(self.folder)
             os.mkdir(self.folder)
 
-    def set_csv_file(self, header: list):
+    def set_csv_file(self, header: tuple):
         """Creates sets a writing csv file for the model"""
         file_name = f"{self.name}.csv"
         file_path = os.path.join(self.folder, file_name)
@@ -137,16 +157,16 @@ class ArimaImprovedModel:
         """Exports the plot to a folder"""
         timesteps = numpy.arange(len(self.values))
 
-        real_values_series = [
+        real_values_series = (
             *[None for i in self.train[:-1]],
             *[self.train[len(self.train) - 1]],
             *[x for x in self.test]
-        ]
+        )
 
-        prediction_values_series = [
+        prediction_values_series = (
             *[None for i in self.train],
             *[x for x in self.predictions]
-        ]
+        )
 
         pyplot.plot(timesteps,
                     real_values_series,
@@ -237,7 +257,7 @@ def export_ratings_list(order: str):
     ratings_list.sort(key=lambda line: float(line[order_num]))
 
     ratings_file = CSVWriter(os.path.join(OUTPUT_FOLDER, "model_ratings.csv"),
-                             ["Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"])
+                             ("Model", "Execution Time (sec)", "MAE", "MSE", "RMSE"))
     ratings_file.write_at_once(ratings_list)
     ratings_file.close()
 

@@ -55,8 +55,8 @@ class ArimaImprovedModel:
         # FIXME: DUVIDA - é necessário instanciar as variaveis todas no inicio antes de utiliza-las?
         # FIXME: Exemplo: name, starting_time, execution_time, ...
         self.arima_parameters = arima_parameters
-        self.name = str()
-        self.series = set_series(filename, date_parser)
+        # self.name = str()
+        self.series = set_series(filename, date_parser).copy()
         self.values = self.series.values
         if num_predictions != 0:
             self.train_size = len(self.values) - num_predictions
@@ -67,13 +67,13 @@ class ArimaImprovedModel:
         self.test = self.values[self.train_size: len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
-        self.starting_time = float()
-        self.execution_time = float()
-        self.mae = float()
-        self.mse = float()
-        self.rmse = float()
-        self.folder = str()
-        self.file = None
+        # self.starting_time = float()
+        # self.execution_time = float()
+        # self.mae = float()
+        # self.mse = float()
+        # self.rmse = float()
+        # self.folder = str()
+        # self.file = None
         self.set_model_name()
         self.set_output_folder()
         self.set_csv_file(("Predict", self.series.name))
@@ -271,7 +271,7 @@ def export_log_file():
         log_file.write(line)
         log_file.write("\n")
     log_file.close()
-    print("Log file finshed.")
+    print("Log file finished.")
 
 
 def init():

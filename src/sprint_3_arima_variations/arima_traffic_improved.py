@@ -96,8 +96,7 @@ def run_tests(train, test, scaler, arima_parameters, num_predictions, location, 
                     os.mkdir(OUTPUT_FOLDER)
                     pyplot.savefig(figure_name)
 
-                # TODO: Continuar aqui...
-                ## Show
+                # Show
                 pyplot.show()
                 raw_results = {"predicted": output_unscaled, "real": test_unscaled}
                 print(raw_results)

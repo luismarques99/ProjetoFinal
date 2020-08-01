@@ -1,19 +1,48 @@
-# :chart_with_upwards_trend: Análise de Algoritmos de Aprendizagem :chart_with_downwards_trend:
+# :chart_with_upwards_trend: Analysis of Machine Learning Algorithms :chart_with_downwards_trend:
 
-Este repositório destina-se ao desenvolvimento do meu **Projeto Final** da **Licenciatura em Engenharia Informática**, realizado na **Escola Superior de Tecnologia e Gestão - P.Porto**.
+## Contents
 
-## Visão Geral
+- [Purpose](#purpose)
+- [Built with](#built-with)
+  - [Documentation](#documentation)
+  - [Comunication](#comunication)
+  - [Version Control](#version-control)
+  - [Source Code](#source-code)
+- [License](#license)
+- [Author](#author)
 
-Este projeto tem como objetivo a **análise comparativa de algoritmos de aprendizagem** baseados em **séries temporais**.
+## Purpose
 
-## Ferramentas
+Project carried out in 2020 special season in order to be my **Final Project** of the **Licenciate Degree in Computer Engineering** at **_Escola Superior de Tecnologia e Gestão - P.Porto_**.
+This project aims to **comparative analysis of machine learning algorithms** based on **timeseries**.
 
-- [Python](https://www.python.org/) - Linguagem de programação
-- [PyCharm](https://www.jetbrains.com/pycharm/) - IDE para desenvolvimento
-- [VS Code](https://code.visualstudio.com/) - IDE para desenvolvimento
-- [GitHub](https://github.com/) - Controlo de versões
-- [MS Teams](https://teams.microsoft.com/) - Comunicação com o professor orientador
+<!-- Projeto realizado em época especial de **2020** com a finalidade de ser o meu **Projeto Final** da **Licenciatura em Engenharia Informática** na **Escola Superior de Tecnologia e Gestão - P.Porto**. -->
 
-## Autor
+## Built with
+
+### Documentation
+
+- [Markdown](https://www.markdownguide.org/) - Minuntes and basic documentaion
+- [LaTeX](https://www.latex-project.org/) - Reports
+
+### Comunication
+
+- [MS Teams](https://teams.microsoft.com/) - Comunication with the supervising professor
+
+### Version control
+
+- [GitHub](https://github.com/) - Version control
+
+### Source code
+
+* [Python](https://www.python.org/) - Programming language
+* [PyCharm](https://www.jetbrains.com/pycharm/) - IDE
+* [VS Code](https://code.visualstudio.com/) - Source code editor
+
+## License
+
+Distributed under the [MIT License](https://choosealicense.com/licenses/mit/). See `LICENSE` for more information.
+
+## Author
 
 - **Luis Marques** - 8170485 - [LuisMarques99](https://github.com/LuisMarques99)

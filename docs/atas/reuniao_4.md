@@ -3,9 +3,13 @@
 **Sprint:** 3
 
 **Local:** MS Teams
+
 **Data:** 02-07-2020
-**Hora inicio:** 17h15m
-**Hora fim:** 18h45m
+
+**Hora de inicio:** 17h15m
+
+**Hora de fim:** 18h45m
+
 **Elaborado por:** Luís Marques
 
 ## Participantes:

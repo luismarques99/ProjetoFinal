@@ -3,6 +3,7 @@
 ## Contents
 
 - [Purpose](#purpose)
+- [Requirements](#requirements)
 - [Built with](#built-with)
   - [Documentation](#documentation)
   - [Comunication](#comunication)
@@ -14,9 +15,12 @@
 ## Purpose
 
 Project carried out in 2020 special season in order to be my **Final Project** of the **Licenciate Degree in Computer Engineering** at **_Escola Superior de Tecnologia e Gestão - P.Porto_**.
-This project aims to **comparative analysis of machine learning algorithms** based on **timeseries**.
+This project aims to make a **comparative analysis of machine learning algorithms** based on **timeseries**.
 
-<!-- Projeto realizado em época especial de **2020** com a finalidade de ser o meu **Projeto Final** da **Licenciatura em Engenharia Informática** na **Escola Superior de Tecnologia e Gestão - P.Porto**. -->
+## Requirements
+- Python 3
+- Pip 3
+- requirements.txt
 
 ## Built with
 

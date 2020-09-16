@@ -29,4 +29,8 @@
 - Terminar o trabalho com os modelos fornecidos pelo professor na [reunião 3](reuniao_3.md).
 - Iniciar o desenvolvimento do [relatório](../report).
 
-<!-- ## Retrospetiva: -->
+## Retrospetiva:
+
+`16-09-2020`
+
+- Não dediquei tempo suficiente às tarefas necessárias. Devo finaliza-las até à próxima sexta feira (18-09-2020).

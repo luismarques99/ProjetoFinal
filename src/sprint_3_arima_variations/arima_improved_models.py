@@ -33,13 +33,15 @@ class ArimaImprovedModel:
         """Creates an instance of an ArimaImprovedModel.
 
         Args:
-            series (DataFrame): series of the dataset to run the model
-            arima_parameters (tuple): parameters of the arima model
+            series (DataFrame): series of the dataset to run the model.
+            arima_parameters (tuple): parameters of the arima model.
             num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
                 predictions_size is equal to zero.
-            predictions_size (float): series of the dataset to run the model
-            series (DataFrame): series of the dataset to run the model
-            series (DataFrame): series of the dataset to run the model
+            predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
+            title (str): title of the model. Used to defferentiate this model from other ones with the same parameters.
+                Defaults to "".
+            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse"). Defaults to "name".
         """
 
         self.series = series
@@ -59,20 +61,6 @@ class ArimaImprovedModel:
         self._set_name()
         self._set_folder()
         self._set_raw_file()
-
-    def _set_name(self):
-        """Sets the name of the model according to its variables"""
-        self.name = ""
-        self.title = "".join(self.title.split())
-        if not self.title:
-            self.name += f"{self.title}_"
-        self.name += "arima("
-        for parameter in self.arima_parameters:
-            self.name += f"{str(parameter)},"
-        self.name = self.name[:-1] + ")_"
-        self.name += f"predictions_{str(self.num_predictions)}"
-        if self.data_split != 0:
-            self.name += f"_crossvalidation_{self.data_split}"
 
     def _execute(self):
         """Executes the model"""
@@ -109,16 +97,22 @@ class ArimaImprovedModel:
             self.file.close()
 
         finally:
-            self.results_list.append(
-                (
-                    f'"{self.name}"',
-                    str(self.execution_time),
-                    str(self.mae),
-                    str(self.mse),
-                    str(self.rmse)
-                )
-            )
+            self.results_list.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
+
+    def _set_name(self):
+        """Sets the name of the model according to its variables"""
+        self.name = ""
+        self.title = "".join(self.title.split())
+        if not self.title:
+            self.name += f"{self.title}_"
+        self.name += "arima("
+        for parameter in self.arima_parameters:
+            self.name += f"{str(parameter)},"
+        self.name = self.name[:-1] + ")_"
+        self.name += f"predictions_{str(self.num_predictions)}"
+        if self.data_split != 0:
+            self.name += f"_crossvalidation_{self.data_split}"
 
     # FIXME: Se a pasta ja existir deve acrescentar um numero [ex:(2)] identificativo a OUTPUT_FOLDER
     def _set_folder(self):
@@ -140,35 +134,14 @@ class ArimaImprovedModel:
         """Exports the plot of the model"""
         timesteps = numpy.arange(len(self.values))
 
-        real_values_series = (
-            *[None for i in self.train[:-1]],
-            *[self.train[len(self.train) - 1]],
-            *[x for x in self.test]
-        )
+        real_values_series = (*[None for i in self.train[:-1]], *[self.train[len(self.train) - 1]], *[x for x in self.test])
 
-        prediction_values_series = (
-            *[None for i in self.train],
-            *[x for x in self.predictions]
-        )
+        prediction_values_series = (*[None for i in self.train], *[x for x in self.predictions])
 
-        pyplot.plot(timesteps,
-                    real_values_series,
-                    color="green",
-                    marker="^",
-                    lineStyles="-",
-                    label="Real values")
-        pyplot.plot(timesteps,
-                    prediction_values_series,
-                    color="red",
-                    marker="X",
-                    lineStyles="-",
-                    label="Predictions")
-        pyplot.plot(numpy.arange(len(self.train)),
-                    self.train,
-                    color="blue",
-                    marker="o",
-                    lineStyles="-",
-                    label="Train values")
+        pyplot.plot(timesteps, real_values_series, color="green", marker="^", lineStyles="-", label="Real values")
+        pyplot.plot(timesteps, prediction_values_series, color="red", marker="X", lineStyles="-", label="Predictions")
+        pyplot.plot(numpy.arange(len(self.train)), self.train, color="blue", marker="o", lineStyles="-", label="Train values")
+
         pyplot.ylabel(self.series.name)
         pyplot.xlabel("Timesteps")
         pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, 1.0))
@@ -229,3 +202,7 @@ def dataset_to_series(filename: str, date_parser: datetime = None):
     except Exception as err:
         print(f"('{filename}') {type(err).__name__}: {err}")
     return series
+
+
+# def run_models(dataset: str, models: tuple, arima_parameters: tuple, num_predictions: int, predictions_size: float, title: str,
+#                order: str):

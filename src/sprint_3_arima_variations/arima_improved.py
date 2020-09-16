@@ -52,10 +52,8 @@ class ArimaImprovedModel:
             num_predictions is different than zero. Defaults to 0.
             date_parser (datetime, optional): function to parse the date. Defaults to None.
         """
-        # FIXME: DUVIDA - é necessário instanciar as variaveis todas no inicio antes de utiliza-las?
-        # FIXME: Exemplo: name, starting_time, execution_time, ...
+
         self.arima_parameters = arima_parameters
-        # self.name = str()
         self.series = set_series(filename, date_parser).copy()
         self.values = self.series.values
         if num_predictions != 0:
@@ -67,13 +65,6 @@ class ArimaImprovedModel:
         self.test = self.values[self.train_size: len(self.values)]
         self.history = [x for x in self.train]
         self.predictions = list()
-        # self.starting_time = float()
-        # self.execution_time = float()
-        # self.mae = float()
-        # self.mse = float()
-        # self.rmse = float()
-        # self.folder = str()
-        # self.file = None
         self.set_model_name()
         self.set_output_folder()
         self.set_csv_file(("Predict", self.series.name))
@@ -86,7 +77,6 @@ class ArimaImprovedModel:
             for timestep in range(self.num_predictions):
                 model = ARIMA(self.history, order=self.arima_parameters)
                 model_fit = model.fit(disp=0)
-                # TODO: DUVIDA - Qual a diferença entre estes outputs e os que eu tenho na minha classe?
                 output = model_fit.forecast()
                 prediction = output[0][0]
                 self.predictions.append(prediction)

@@ -156,13 +156,35 @@ class ArimaImprovedModel:
 # class SarimaMultivariateImprovedModel(ArimaImprovedModel):
 
 def init():
+    dataset = "shampoo-sales.csv"
+
+    def parser(x: int):
+        return datetime.strptime(f"190{x}", "%Y-%m")
+
+    models = [
+        {
+            "model": ArimaImprovedModel,
+            "arima_parameters": [(1, 2, 1), (1, 2, 2), (1, 2, 3)],
+            "title": "Shampoo _ Sales _ 1"
+        },
+        {
+            "model": ArimaImprovedModel,
+            "arima_parameters": [(4, 2, 1), (4, 2, 2), (4, 2, 3)],
+            "title": "Shampoo _ Sales _ 4"
+        }
+    ]
+
+    num_predictions = 12
+
+
+
     return
 
 
 def run_models(dataset_name: str, date_parser: datetime, models: list, num_predictions: int, predictions_size: float,
                title: str, num_splits: int, results_order: str):
     series = _dataset_to_series(dataset_name, date_parser)
-    
+
     return
 
 

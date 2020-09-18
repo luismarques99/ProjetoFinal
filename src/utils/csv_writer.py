@@ -1,14 +1,14 @@
 class CSVWriter:
     """Class that represents the structure of a CSV file writer"""
 
-    def __init__(self, filename: str, header: tuple):
+    def __init__(self, filename: str, header: tuple, file_type: str = "w"):
         """Creates an instance of a CSV file writer
 
         Args:
             filename (str): string to define the name of the file.
             header (tuple): tuple of strings to be written as the header of the file.
         """
-        self.file = open(filename, "w")
+        self.file = open(filename, file_type)
         self.write_line(header)
 
     def write_at_once(self, content: list):

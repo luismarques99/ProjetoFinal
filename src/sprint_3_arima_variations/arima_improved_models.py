@@ -27,24 +27,27 @@ results = list()
 logs = list()
 
 
+# Classes
 class ArimaImprovedModel:
-    def __init__(self, series: DataFrame, arima_parameters: tuple, num_predictions: int = 10, predictions_size: float = 0.0,
-                 title: str = "", data_split: int = 0):
+    def __init__(self, series: DataFrame, arima_parameters: tuple, title: str = "", data_split: int = 0,
+                 num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an ArimaImprovedModel.
 
         Args:
             series (DataFrame): series of the dataset to run the model.
             arima_parameters (tuple): parameters of the arima model.
+            title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
+                Defaults to "".
+            data_split (int): split number of the dataset used in the model. Defaults to 0.
             num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
                 predictions_size is equal to zero.
             predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
-            title (str): title of the model. Used to defferentiate this model from other ones with the same parameters.
-                Defaults to "".
-            data_split (int): split number of the dataset used in the model. Defaults to 0.
         """
 
         self.series = series
         self.arima_parameters = arima_parameters
+        self.title = title
+        self.data_split = data_split
         self.values = self.series.values
         if predictions_size == 0.0:
             self.num_predictions = num_predictions
@@ -54,8 +57,6 @@ class ArimaImprovedModel:
         self.test = self.values[-self.num_predictions:]
         self.history = [x for x in self.train]
         self.predictions = list()
-        self.title = title
-        self.data_split = data_split
         self._set_name()
         self._set_folder()
         self._set_raw_file()
@@ -103,7 +104,7 @@ class ArimaImprovedModel:
         """Sets the name of the model according to its variables"""
         self.name = ""
         self.title = "".join(self.title.split())
-        if not self.title:
+        if self.title != "":
             self.name += f"{self.title}_"
         self.name += "arima("
         for parameter in self.arima_parameters:
@@ -133,13 +134,15 @@ class ArimaImprovedModel:
         """Exports the plot of the model"""
         timesteps = numpy.arange(len(self.values))
 
-        real_values_series = (*[None for i in self.train[:-1]], *[self.train[len(self.train) - 1]], *[x for x in self.test])
+        real_values_series = (
+            *[None for i in self.train[:-1]], *[self.train[len(self.train) - 1]], *[x for x in self.test])
 
         prediction_values_series = (*[None for i in self.train], *[x for x in self.predictions])
 
         pyplot.plot(timesteps, real_values_series, color="green", marker="^", lineStyles="-", label="Real values")
         pyplot.plot(timesteps, prediction_values_series, color="red", marker="X", lineStyles="-", label="Predictions")
-        pyplot.plot(numpy.arange(len(self.train)), self.train, color="blue", marker="o", lineStyles="-", label="Train values")
+        pyplot.plot(numpy.arange(len(self.train)), self.train, color="blue", marker="o", lineStyles="-",
+                    label="Train values")
 
         pyplot.ylabel(self.series.name)
         pyplot.xlabel("Timesteps")
@@ -151,51 +154,95 @@ class ArimaImprovedModel:
         pyplot.close()
 
 
-# class ArimaMultivariateImprovedModel(ArimaImprovedModel):
-# class SarimaImprovedModel(ArimaImprovedModel):
-# class SarimaMultivariateImprovedModel(ArimaImprovedModel):
+class ArimaMultivariateImprovedModel(ArimaImprovedModel):
+    def __init__(self, series: DataFrame, arima_parameters: tuple, title: str = "", data_split: int = 0,
+                 num_predictions: int = 10, predictions_size: float = 0.0):
+        super().__init__(series, arima_parameters, title, data_split, num_predictions, predictions_size)
 
+
+class SarimaImprovedModel(ArimaImprovedModel):
+    def __init__(self, series: DataFrame, arima_parameters: tuple, title: str = "", data_split: int = 0,
+                 num_predictions: int = 10, predictions_size: float = 0.0):
+        super().__init__(series, arima_parameters, title, data_split, num_predictions, predictions_size)
+
+
+class SarimaMultivariateImprovedModel(ArimaImprovedModel):
+    def __init__(self, series: DataFrame, arima_parameters: tuple, title: str = "", data_split: int = 0,
+                 num_predictions: int = 10, predictions_size: float = 0.0):
+        super().__init__(series, arima_parameters, title, data_split, num_predictions, predictions_size)
+
+
+# Functions
 def init():
     dataset = "shampoo-sales.csv"
 
     def parser(x: int):
         return datetime.strptime(f"190{x}", "%Y-%m")
 
+    arima_parameters = list()
+    for p in range(1, 6):
+        for d in range(0, 4):
+            for q in range(0, 4):
+                arima_parameters.append((p, d, q))
+
     models = [
         {
             "model": ArimaImprovedModel,
-            "arima_parameters": [(1, 2, 1), (1, 2, 2), (1, 2, 3)],
-            "title": "Shampoo _ Sales _ 1"
+            "arima_parameters": arima_parameters
         },
         {
             "model": ArimaImprovedModel,
-            "arima_parameters": [(4, 2, 1), (4, 2, 2), (4, 2, 3)],
-            "title": "Shampoo _ Sales _ 4"
+            "arima_parameters": arima_parameters
         }
     ]
 
     num_predictions = 12
 
+    title = " Shampoo _ Sales "
+
+    num_splits = 3
+
+    results_order = "mse"
+
+    run_models(dataset_name=dataset, date_parser=parser, models=models, num_predictions=num_predictions, title=title,
+               num_splits=num_splits, results_order=results_order)
 
 
-    return
+def run_models(dataset_name: str, models: list, title: str, num_splits: int, results_order: str, num_predictions: int,
+               predictions_size: float = 0, date_parser=None):
+    """Parses the dataset (.csv file) into a DataFrame object and runs ARIMA models with the given dataset.
 
-
-def run_models(dataset_name: str, date_parser: datetime, models: list, num_predictions: int, predictions_size: float,
-               title: str, num_splits: int, results_order: str):
+    Args:
+        dataset_name (str): name of the .csv file with the dataset.
+        models (list): list of dictionaries with the ARIMA models to be tested
+        title (str): title to be used in the output files to distinguish the models
+        num_splits (int): number of splits in case of being cross validation models
+        results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse").
+        num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
+            predictions_size is equal to zero.
+        predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
+        date_parser (optional): function to parse the dates of the dataset if needed. The function should return a
+            datetime.
+    """
     series = _dataset_to_series(dataset_name, date_parser)
 
-    return
+    for model in models:
+        for arima_parameters in model.get("arima_parameters"):
+            model.get("model")(series=series, arima_parameters=arima_parameters, num_predictions=num_predictions,
+                               predictions_size=predictions_size, title=title, data_split=num_splits)
+
+    _export_results(results_order)
+    _export_logs()
 
 
-def _dataset_to_series(filename: str, date_parser: datetime = None):
+def _dataset_to_series(filename: str, date_parser=None):
     """Searches FILES_FOLDER for a dataset and returns it into a DataFrame object. If it is needed to parse the dates,
     a function should be passed as the "date_parser" argument.
 
     Args:
         filename (str): name of the .csv file containing the dataset. This file should be in the FILES_FOLDER.
-        date_parser (datetime, optional): function to parse the dates of the dataset if needed. The function should return a
-        datetime.
+        date_parser (optional): function to parse the dates of the dataset if needed. The function should return a
+            datetime.
     """
     FILES_FOLDER = "files"
     file_path = os.path.join(FILES_FOLDER, filename)
@@ -211,7 +258,8 @@ def _export_results(results_order: str = "name"):
     """Exports the results list into a .csv file ordered by the model order
 
     Args:
-        results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse"). Defaults to "name".
+        results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse"). Defaults to
+            "name".
     """
     order = results_order.lower()
     if order == "time":

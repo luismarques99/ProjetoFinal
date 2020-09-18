@@ -22,14 +22,14 @@ os.chdir(PATH)
 
 from src.utils.csv_writer import CSVWriter
 
+OUTPUT_FOLDER = "results_arima"
+results = list()
+logs = list()
+
 
 class ArimaImprovedModel:
-    OUTPUT_FOLDER = "results_arima"
-    results_list = list()
-    log_list = list()
-
-    def __init__(self, series: DataFrame, arima_parameters: tuple, num_predictions: int = 10, predictions_size: float = 0,
-                 title: str = "", data_split: int = 0, order: str = "name"):
+    def __init__(self, series: DataFrame, arima_parameters: tuple, num_predictions: int = 10, predictions_size: float = 0.0,
+                 title: str = "", data_split: int = 0):
         """Creates an instance of an ArimaImprovedModel.
 
         Args:
@@ -41,13 +41,12 @@ class ArimaImprovedModel:
             title (str): title of the model. Used to defferentiate this model from other ones with the same parameters.
                 Defaults to "".
             data_split (int): split number of the dataset used in the model. Defaults to 0.
-            order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse"). Defaults to "name".
         """
 
         self.series = series
         self.arima_parameters = arima_parameters
         self.values = self.series.values
-        if predictions_size == 0:
+        if predictions_size == 0.0:
             self.num_predictions = num_predictions
         else:
             self.num_predictions = int(len(self.values) * predictions_size)
@@ -57,10 +56,10 @@ class ArimaImprovedModel:
         self.predictions = list()
         self.title = title
         self.data_split = data_split
-        self.order = order
         self._set_name()
         self._set_folder()
         self._set_raw_file()
+        self._execute()
 
     def _execute(self):
         """Executes the model"""
@@ -79,7 +78,7 @@ class ArimaImprovedModel:
             self._export_plot()
 
         except Exception as err:
-            self.log_list.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
+            logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
             self.execution_time = -1
             self.mae = -1
             self.mse = -1
@@ -89,7 +88,7 @@ class ArimaImprovedModel:
             shutil.rmtree(self.folder)
 
         else:
-            self.log_list.append(f"LOG: Model {self.name} exported with success.")
+            logs.append(f"LOG: Model {self.name} exported with success.")
             self.execution_time = time.time() - self.starting_time
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
@@ -97,7 +96,7 @@ class ArimaImprovedModel:
             self.file.close()
 
         finally:
-            self.results_list.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
+            results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
 
     def _set_name(self):
@@ -117,7 +116,7 @@ class ArimaImprovedModel:
     # FIXME: Se a pasta ja existir deve acrescentar um numero [ex:(2)] identificativo a OUTPUT_FOLDER
     def _set_folder(self):
         """Creates an output folder for the model"""
-        self.folder = os.path.join(self.OUTPUT_FOLDER, self.name)
+        self.folder = os.path.join(OUTPUT_FOLDER, self.name)
         try:
             os.makedirs(self.folder)
         except FileNotFoundError:
@@ -151,51 +150,33 @@ class ArimaImprovedModel:
         pyplot.savefig(os.path.join(self.folder, f"plot_{self.name}.png"), format="png", dpi=300)
         pyplot.close()
 
-    def _export_results_list(self):
-        """Exports the results list into a .csv file ordered by the model order"""
-        order = self.order.lower()
-        if order == "time":
-            order_num = 1
-            order_name = "Execution Time (sec)"
-        elif order == "mae":
-            order_num = 2
-            order_name = "MAE"
-        elif order == "mse":
-            order_num = 3
-            order_name = "MSE"
-        elif order == "rmse":
-            order_num = 2
-            order_name = "RMSE"
-        else:
-            order_num = 0
-            order_name = "Model Name"
-
-        self.results_list.sort(key=lambda line: float(line[order_num]))
-
-        results_file = CSVWriter(os.path.join(self.OUTPUT_FOLDER, "results_summary.csv"), ("Model", "Execution Time (sec)",
-                                                                                           "MAE", "MSE", "RMSE"))
-        results_file.write_at_once(self.results_list)
-        results_file.close()
-
-        print(f"Results list file finished. Ordered by {order_name}.")
-
-    def _export_log_file(self):
-        """Exports the log list into a .txt file"""
-        log_file = open(os.path.join(self.OUTPUT_FOLDER, "log.txt"), "w")
-        for line in self.log_list:
-            log_file.write(line)
-            log_file.write("\n")
-        log_file.close()
-        print("Log file finished.")
-
 
 # class ArimaMultivariateImprovedModel(ArimaImprovedModel):
 # class SarimaImprovedModel(ArimaImprovedModel):
 # class SarimaMultivariateImprovedModel(ArimaImprovedModel):
 
+def init():
+    return
 
-def dataset_to_series(filename: str, date_parser: datetime = None):
-    file_path = os.path.join("files", filename)
+
+def run_models(dataset_name: str, date_parser: datetime, models: list, num_predictions: int, predictions_size: float,
+               title: str, num_splits: int, results_order: str):
+    series = _dataset_to_series(dataset_name, date_parser)
+    
+    return
+
+
+def _dataset_to_series(filename: str, date_parser: datetime = None):
+    """Searches FILES_FOLDER for a dataset and returns it into a DataFrame object. If it is needed to parse the dates,
+    a function should be passed as the "date_parser" argument.
+
+    Args:
+        filename (str): name of the .csv file containing the dataset. This file should be in the FILES_FOLDER.
+        date_parser (datetime, optional): function to parse the dates of the dataset if needed. The function should return a
+        datetime.
+    """
+    FILES_FOLDER = "files"
+    file_path = os.path.join(FILES_FOLDER, filename)
     series = DataFrame()
     try:
         series = read_csv(file_path, header=0, index_col=0, parse_dates=False, squeeze=True, date_parser=date_parser)
@@ -204,5 +185,44 @@ def dataset_to_series(filename: str, date_parser: datetime = None):
     return series
 
 
-# def run_models(dataset: str, models: tuple, arima_parameters: tuple, num_predictions: int, predictions_size: float, title: str,
-#                order: str):
+def _export_results(results_order: str = "name"):
+    """Exports the results list into a .csv file ordered by the model order
+
+    Args:
+        results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse"). Defaults to "name".
+    """
+    order = results_order.lower()
+    if order == "time":
+        order_num = 1
+        order_name = "Execution Time (sec)"
+    elif order == "mae":
+        order_num = 2
+        order_name = "MAE"
+    elif order == "mse":
+        order_num = 3
+        order_name = "MSE"
+    elif order == "rmse":
+        order_num = 2
+        order_name = "RMSE"
+    else:
+        order_num = 0
+        order_name = "Model Name"
+
+    results.sort(key=lambda line: float(line[order_num]))
+
+    results_file = CSVWriter(os.path.join(OUTPUT_FOLDER, "results_summary.csv"), ("Model", "Execution Time (sec)",
+                                                                                  "MAE", "MSE", "RMSE"))
+    results_file.write_at_once(results)
+    results_file.close()
+
+    print(f"Results list file finished. Ordered by {order_name}.")
+
+
+def _export_logs():
+    """Exports the log list into a .txt file"""
+    log_file = open(os.path.join(OUTPUT_FOLDER, "log.txt"), "w")
+    for log in logs:
+        log_file.write(log)
+        log_file.write("\n")
+    log_file.close()
+    print("Log file finished.")

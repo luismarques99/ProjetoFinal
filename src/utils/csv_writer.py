@@ -1,5 +1,8 @@
 class CSVWriter:
-    """Class that represents the structure of a CSV file writer"""
+    """Class that represents the structure of a CSV file writer
+
+    Author: Luis Marques
+    """
 
     def __init__(self, filename: str, header: tuple, file_type: str = "w"):
         """Creates an instance of a CSV file writer

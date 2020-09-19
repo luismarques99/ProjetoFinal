@@ -4,12 +4,12 @@ import shutil
 import numpy
 import time
 
-from pandas import read_csv, DataFrame
-from matplotlib import pyplot
-from statsmodels.tsa.arima_model import ARIMA
-from sklearn.metrics import mean_squared_error, mean_absolute_error
 from datetime import datetime
 from math import sqrt
+from pandas import read_csv, DataFrame
+from matplotlib import pyplot
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
 PATH = os.path.join(ROOT_PATH, "src", "sprint_3_arima_variations")
@@ -22,13 +22,19 @@ os.chdir(PATH)
 
 from src.utils.csv_writer import CSVWriter
 
-OUTPUT_FOLDER = "results_arima"
+timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+OUTPUT_FOLDER = f"{timestamp}_results_arima"
 results = list()
 logs = list()
 
 
 # Classes
 class ArimaImprovedModel:
+    """Class that represents the structure of an ARIMA improved model
+
+    Author: Luis Marques
+    """
+
     def __init__(self, series: DataFrame, arima_parameters: tuple, title: str = "", data_split: int = 0,
                  num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an ArimaImprovedModel.
@@ -68,9 +74,9 @@ class ArimaImprovedModel:
         try:
             for timestep in range(self.num_predictions):
                 model = ARIMA(self.history, order=self.arima_parameters)
-                model_fit = model.fit(disp=0)
+                model_fit = model.fit()
                 output = model_fit.forecast()
-                prediction = output[0][0]
+                prediction = output[0]
                 self.predictions.append(prediction)
                 obs = self.test[timestep]
                 self.history.append(obs)
@@ -114,7 +120,6 @@ class ArimaImprovedModel:
         if self.data_split != 0:
             self.name += f"_crossvalidation_{self.data_split}"
 
-    # FIXME: Se a pasta ja existir deve acrescentar um numero [ex:(2)] identificativo a OUTPUT_FOLDER
     def _set_folder(self):
         """Creates an output folder for the model"""
         self.folder = os.path.join(OUTPUT_FOLDER, self.name)
@@ -139,10 +144,9 @@ class ArimaImprovedModel:
 
         prediction_values_series = (*[None for i in self.train], *[x for x in self.predictions])
 
-        pyplot.plot(timesteps, real_values_series, color="green", marker="^", lineStyles="-", label="Real values")
-        pyplot.plot(timesteps, prediction_values_series, color="red", marker="X", lineStyles="-", label="Predictions")
-        pyplot.plot(numpy.arange(len(self.train)), self.train, color="blue", marker="o", lineStyles="-",
-                    label="Train values")
+        pyplot.plot(timesteps, real_values_series, color="green", marker="^", label="Real values")
+        pyplot.plot(timesteps, prediction_values_series, color="red", marker="X", label="Predictions")
+        pyplot.plot(numpy.arange(len(self.train)), self.train, color="blue", marker="o", label="Train values")
 
         pyplot.ylabel(self.series.name)
         pyplot.xlabel("Timesteps")
@@ -179,21 +183,23 @@ def init():
     def parser(x: int):
         return datetime.strptime(f"190{x}", "%Y-%m")
 
-    arima_parameters = list()
-    for p in range(1, 6):
-        for d in range(0, 4):
-            for q in range(0, 4):
-                arima_parameters.append((p, d, q))
+    # arima_parameters = list()
+    # for p in range(1, 6):
+    #     for d in range(0, 4):
+    #         for q in range(0, 4):
+    #             arima_parameters.append((p, d, q))
+
+    arima_parameters = [(1,2,3),(2,2,3),(3,2,3),(4,2,3)]
 
     models = [
         {
             "model": ArimaImprovedModel,
             "arima_parameters": arima_parameters
         },
-        {
-            "model": ArimaImprovedModel,
-            "arima_parameters": arima_parameters
-        }
+        # {
+        #     "model": ArimaImprovedModel,
+        #     "arima_parameters": arima_parameters
+        # }
     ]
 
     num_predictions = 12

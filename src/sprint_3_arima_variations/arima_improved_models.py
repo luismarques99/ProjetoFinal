@@ -135,25 +135,37 @@ class ArimaImprovedModel:
         file_path = os.path.join(self.folder, file_name)
         self.file = CSVWriter(file_path, ("Predict", self.series.name))
 
+    # FIXME: Rever caso de quando o tamanho do self.values é menor que 50
     def _export_plot(self):
         """Exports the plot of the model"""
         timesteps = numpy.arange(len(self.values))
+        train_size = 0
+        train_values = tuple()
 
-        real_values_series = (
-            *[None for i in self.train[:-1]], *[self.train[len(self.train) - 1]], *[x for x in self.test])
+        if (len(self.values) <= 50):
+            train_values = tuple([x for x in self.values[:-self.num_predictions]])
+        elif (self.num_predictions < 50):
+            timesteps = timesteps[-50:]
+            train_size = 50 - self.num_predictions
+            train_values = tuple([x for x in self.train[-train_size:]])
+        else:
+            timesteps = timesteps[-self.num_predictions:]
 
-        prediction_values_series = (*[None for i in self.train], *[x for x in self.predictions])
+        real_values = (*[None for i in train_values[:-1]], *[train_values[len(train_values) - 1]],
+                       *[x for x in self.test])
 
-        pyplot.plot(timesteps, real_values_series, color="green", marker="^", label="Real values")
-        pyplot.plot(timesteps, prediction_values_series, color="red", marker="X", label="Predictions")
-        pyplot.plot(numpy.arange(len(self.train)), self.train, color="blue", marker="o", label="Train values")
+        prediction_values = (*[None for i in train_values], *[x for x in self.predictions])
+
+        pyplot.plot(timesteps, real_values, color="green", marker="^", label="Real values")
+        pyplot.plot(timesteps, prediction_values, color="red", marker="X", label="Predictions")
+        pyplot.plot(timesteps[:train_size], train_values, color="blue", marker="o", label="Train values")
 
         pyplot.ylabel(self.series.name)
         pyplot.xlabel("Timesteps")
-        pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, 1.0))
+        pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, 2.0))
         pyplot.grid(which="major", alpha=0.5)
         pyplot.gcf().canvas.set_window_title(self.name)
-        pyplot.gcf().set_size_inches(12, 7)
+        pyplot.gcf().set_size_inches(15, 9)
         pyplot.savefig(os.path.join(self.folder, f"plot_{self.name}.png"), format="png", dpi=300)
         pyplot.close()
 
@@ -179,6 +191,7 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
 # Functions
 def init():
     dataset = "shampoo-sales.csv"
+    # dataset = "daily-births.csv"
 
     def parser(x: int):
         return datetime.strptime(f"190{x}", "%Y-%m")
@@ -189,7 +202,7 @@ def init():
     #         for q in range(0, 4):
     #             arima_parameters.append((p, d, q))
 
-    arima_parameters = [(1,2,3),(2,2,3),(3,2,3),(4,2,3)]
+    arima_parameters = [(1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3)]
 
     models = [
         {
@@ -204,7 +217,7 @@ def init():
 
     num_predictions = 12
 
-    title = " Shampoo _ Sales "
+    title = "Daily Births"
 
     num_splits = 3
 
@@ -212,6 +225,8 @@ def init():
 
     run_models(dataset_name=dataset, date_parser=parser, models=models, num_predictions=num_predictions, title=title,
                num_splits=num_splits, results_order=results_order)
+    # run_models(dataset_name=dataset, models=models, num_predictions=num_predictions, title=title,
+    #            num_splits=num_splits, results_order=results_order)
 
 
 def run_models(dataset_name: str, models: list, title: str, num_splits: int, results_order: str, num_predictions: int,

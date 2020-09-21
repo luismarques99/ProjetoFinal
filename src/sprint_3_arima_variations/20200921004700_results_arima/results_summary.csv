@@ -1,0 +1,5 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"DailyBirths_arima(1,2,3)_predictions_12_crossvalidation_3",-1,-1,-1,-1
+"DailyBirths_arima(2,2,3)_predictions_12_crossvalidation_3",-1,-1,-1,-1
+"DailyBirths_arima(3,2,3)_predictions_12_crossvalidation_3",-1,-1,-1,-1
+"DailyBirths_arima(4,2,3)_predictions_12_crossvalidation_3",-1,-1,-1,-1

@@ -12,7 +12,8 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import TimeSeriesSplit
+
+# from sklearn.model_selection import TimeSeriesSplit
 
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
 PATH = os.path.join(ROOT_PATH, "src", "sprint_3_arima_variations")
@@ -26,6 +27,7 @@ os.chdir(PATH)
 from src.utils.csv_writer import CSVWriter
 
 timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+OUTPUT_FOLDER = f"{timestamp}_results_arima"
 results = list()
 logs = list()
 
@@ -37,8 +39,6 @@ class ArimaImprovedModel:
     Author: Luis Marques
     """
 
-    OUTPUT_FOLDER = f"{timestamp}_results_arima"
-
     # FIXME: Utilizar a classe TimeSeriesSplit para separar o dataset com os splits necessarios
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
                  data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
@@ -46,6 +46,8 @@ class ArimaImprovedModel:
 
         Args:
             series (DataFrame): series of the dataset to run the model.
+            variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
+                dataset.
             arima_parameters (tuple): parameters of the arima model.
             title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
                 Defaults to "".
@@ -101,6 +103,7 @@ class ArimaImprovedModel:
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
+            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -108,7 +111,6 @@ class ArimaImprovedModel:
             self.mae = -1
             self.mse = -1
             self.rmse = -1
-            self.file.close()
             # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
 
@@ -118,7 +120,6 @@ class ArimaImprovedModel:
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
-            self.file.close()
 
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
@@ -147,7 +148,7 @@ class ArimaImprovedModel:
 
     def _set_folder(self):
         """Creates an output folder for the model"""
-        self.folder = os.path.join(self.OUTPUT_FOLDER, self.name)
+        self.folder = os.path.join(OUTPUT_FOLDER, self.name)
         try:
             os.makedirs(self.folder)
         except FileNotFoundError:
@@ -210,10 +211,23 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
     Author: Luis Marques
     """
 
-    OUTPUT_FOLDER = f"{timestamp}_results_arimax"
-
     def __init__(self, series: DataFrame, variable_to_predict: str, exog_variables: tuple, arima_parameters: tuple,
                  title: str = "", data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+        """Creates an instance of an ArimaMultivariateImprovedModel.
+
+        Args:
+            series (DataFrame): series of the dataset to run the model.
+            variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
+                dataset.
+            exog_variables (tuple): tuple of exogenous variables to help the model to predict the values.
+            arima_parameters (tuple): parameters of the arima model.
+            title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
+                Defaults to "".
+            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
+                predictions_size is equal to zero.
+            predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
+        """
         self.exog_variables = exog_variables
         super().__init__(series, variable_to_predict, arima_parameters, title, data_split, num_predictions,
                          predictions_size)
@@ -223,24 +237,24 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
         self.starting_time = time.time()
         try:
             # # Fazer as previsoes todas de uma vez
-            history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
-            test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
-            model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
-            model_fit = model.fit()
-            predictions = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
+            # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
+            # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
+            # model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
+            # model_fit = model.fit()
+            # predictions = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
 
             # Fazer uma previsao de cada vez
-            # predictions = list()
-            # for timestep in range(self.num_predictions):
-            #     history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
-            #     test_extra = tuple(self.exog_values[-len(self.test) + timestep])
-            #     model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
-            #     model_fit = model.fit()
-            #     output = model_fit.forecast(exog=test_extra)
-            #     prediction = output[0]
-            #     predictions.append(prediction)
-            #     obs = self.test[timestep]
-            #     self.history.append(obs)
+            predictions = list()
+            for timestep in range(self.num_predictions):
+                history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
+                test_extra = tuple(self.exog_values[-len(self.test) + timestep])
+                model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
+                model_fit = model.fit()
+                output = model_fit.forecast(exog=test_extra)
+                prediction = output[0]
+                predictions.append(prediction)
+                obs = self.test[timestep]
+                self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
             self.train = self.scaler.inverse_transform([self.train])[0]
@@ -250,6 +264,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
+            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -257,7 +272,6 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             self.mae = -1
             self.mse = -1
             self.rmse = -1
-            self.file.close()
             # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
 
@@ -267,7 +281,6 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
-            self.file.close()
 
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
@@ -301,10 +314,23 @@ class SarimaImprovedModel(ArimaImprovedModel):
     Author: Luis Marques
     """
 
-    OUTPUT_FOLDER = f"{timestamp}_results_sarima"
-
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, season_parameters: tuple,
                  title: str = "", data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+        """Creates an instance of an SarimaImprovedModel.
+
+        Args:
+            series (DataFrame): series of the dataset to run the model.
+            variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
+                dataset.
+            arima_parameters (tuple): parameters of the sarima model.
+            season_parameters (tuple): season parameters of the sarima model.
+            title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
+                Defaults to "".
+            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
+                predictions_size is equal to zero.
+            predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
+        """
         self.season_parameters = season_parameters
         super().__init__(series, variable_to_predict, arima_parameters, title, data_split, num_predictions,
                          predictions_size)
@@ -338,6 +364,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
+            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -345,7 +372,6 @@ class SarimaImprovedModel(ArimaImprovedModel):
             self.mae = -1
             self.mse = -1
             self.rmse = -1
-            self.file.close()
             # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
 
@@ -355,7 +381,6 @@ class SarimaImprovedModel(ArimaImprovedModel):
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
-            self.file.close()
 
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
@@ -380,10 +405,114 @@ class SarimaImprovedModel(ArimaImprovedModel):
 
 
 class SarimaMultivariateImprovedModel(ArimaImprovedModel):
-    def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
-                 data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+    """Class that represents the structure of a SARIMA multivariate improved model
+
+    Author: Luis Marques
+    """
+
+    def __init__(self, series: DataFrame, variable_to_predict: str, exog_variables: tuple, arima_parameters: tuple,
+                 season_parameters: tuple, title: str = "", data_split: int = 0, num_predictions: int = 10,
+                 predictions_size: float = 0.0):
+        """Creates an instance of an SarimaMultivariateImprovedModel.
+
+        Args:
+            series (DataFrame): series of the dataset to run the model.
+            variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
+                dataset.
+            exog_variables (tuple): tuple of exogenous variables to help the model to predict the values.
+            arima_parameters (tuple): parameters of the sarima model.
+            season_parameters (tuple): season parameters of the sarima model.
+            title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
+                Defaults to "".
+            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
+                predictions_size is equal to zero.
+            predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
+        """
+        self.exog_variables = exog_variables
+        self.season_parameters = season_parameters
         super().__init__(series, variable_to_predict, arima_parameters, title, data_split, num_predictions,
                          predictions_size)
+
+    def _execute(self):
+        """Executes the model"""
+        self.starting_time = time.time()
+        try:
+            # # Fazer as previsoes todas de uma vez
+            # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
+            # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
+            # model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
+            # model_fit = model.fit()
+            # predictions = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
+
+            # Fazer uma previsao de cada vez
+            predictions = list()
+            for timestep in range(self.num_predictions):
+                history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
+                test_extra = tuple(self.exog_values[-len(self.test) + timestep])
+                model = SARIMAX(self.history, exog=history_extra, order=self.arima_parameters,
+                                seasonal_order=self.season_parameters, enforce_stationarity=False,
+                                enforce_invertibility=False)
+                model_fit = model.fit()
+                output = model_fit.forecast(exog=test_extra)
+                prediction = output[0]
+                predictions.append(prediction)
+                obs = self.test[timestep]
+                self.history.append(obs)
+
+            self.predictions = self.scaler.inverse_transform([predictions])[0]
+            self.train = self.scaler.inverse_transform([self.train])[0]
+            self.test = self.scaler.inverse_transform([self.test])[0]
+
+            for timestep in range(self.num_predictions):
+                self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
+
+            self._export_plot()
+            self.file.close()
+
+        except Exception as err:
+            logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
+            self.execution_time = -1
+            self.mae = -1
+            self.mse = -1
+            self.rmse = -1
+            # If it returns an error the model folder is removed
+            shutil.rmtree(self.folder)
+
+        else:
+            logs.append(f"LOG: Model {self.name} exported with success.")
+            self.execution_time = time.time() - self.starting_time
+            self.mae = mean_absolute_error(self.test, self.predictions)
+            self.mse = mean_squared_error(self.test, self.predictions)
+            self.rmse = sqrt(self.mse)
+
+        finally:
+            results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
+            print(f"Model {self.name} finished.")
+
+    def _set_values(self):
+        """Sets the values arrays to be used based on the series and the variable to predict. Also sets the exog
+        values to be used in the predictions."""
+        self.exog_values = self.series.filter(items=self.exog_variables)
+        self.exog_values = self.exog_values.values
+        super()._set_values()
+
+    def _set_name(self):
+        """Sets the name of the model according to its variables"""
+        self.name = ""
+        self.title = "".join(self.title.split())
+        if self.title != "":
+            self.name += f"{self.title}_"
+        self.name += "sarimax("
+        for parameter in self.arima_parameters:
+            self.name += f"{str(parameter)},"
+        self.name = self.name[:-1] + ")("
+        for parameter in self.season_parameters:
+            self.name += f"{str(parameter)},"
+        self.name = self.name[:-1] + ")_"
+        self.name += f"predictions_{str(self.num_predictions)}"
+        if self.data_split != 0:
+            self.name += f"_crossvalidation_{self.data_split}"
 
 
 # Functions
@@ -394,8 +523,8 @@ def init():
 
     variable_to_predict = "speed_diff"
 
-    def parser(x: int):
-        return datetime.strptime(f"190{x}", "%Y-%m")
+    # def parser(x: int):
+    #     return datetime.strptime(f"190{x}", "%Y-%m")
 
     # arima_parameters = list()
     # for p in range(1, 6):
@@ -403,21 +532,27 @@ def init():
     #         for q in range(0, 4):
     #             arima_parameters.append((p, d, q))
 
-    arima_parameters = [(1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3)]
+    arima_parameters = [(2, 2, 3), (4, 2, 3)]
 
     models = [
-        # {
-        #     "model": ArimaImprovedModel,
-        #     "arima_parameters": arima_parameters
-        # },
-        # {
-        #     "model": ArimaMultivariateImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "exog_variables": ("precipitation", "week_day")
-        # },
+        {
+            "model": ArimaImprovedModel,
+            "arima_parameters": arima_parameters
+        },
+        {
+            "model": ArimaMultivariateImprovedModel,
+            "arima_parameters": arima_parameters,
+            "exog_variables": ("precipitation", "week_day")
+        },
         {
             "model": SarimaImprovedModel,
             "arima_parameters": arima_parameters,
+            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        },
+        {
+            "model": SarimaMultivariateImprovedModel,
+            "arima_parameters": arima_parameters,
+            "exog_variables": ("precipitation", "week_day"),
             "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
         }
     ]
@@ -442,9 +577,11 @@ def run_models(dataset_name: str, models: list, variable_to_predict: str, title:
 
     Args:
         dataset_name (str): name of the .csv file with the dataset.
-        models (list): list of dictionaries with the ARIMA models to be tested
-        title (str): title to be used in the output files to distinguish the models
-        num_splits (int): number of splits in case of being cross validation models
+        models (list): list of dictionaries with the ARIMA models to be tested.
+        title (str): title to be used in the output files to distinguish the models.
+        variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
+            dataset.
+        num_splits (int): number of splits in case of being cross validation models.
         results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse").
         num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
             predictions_size is equal to zero.
@@ -469,11 +606,20 @@ def run_models(dataset_name: str, models: list, variable_to_predict: str, title:
             elif model.get("model") == SarimaImprovedModel:
                 for season_parameters in model.get("season_parameters"):
                     model.get("model")(series=series, variable_to_predict=variable_to_predict,
-                                       arima_parameters=arima_parameters, season_parameters= season_parameters,
+                                       arima_parameters=arima_parameters, season_parameters=season_parameters,
                                        num_predictions=num_predictions, predictions_size=predictions_size, title=title,
                                        data_split=num_splits)
-        _export_results(model.get("model").OUTPUT_FOLDER, results_order)
-        _export_logs(model.get("model").OUTPUT_FOLDER)
+            elif model.get("model") == SarimaMultivariateImprovedModel:
+                exog_variables = model.get("exog_variables")
+                for season_parameters in model.get("season_parameters"):
+                    model.get("model")(series=series, variable_to_predict=variable_to_predict,
+                                       exog_variables=exog_variables, arima_parameters=arima_parameters,
+                                       season_parameters=season_parameters, num_predictions=num_predictions,
+                                       predictions_size=predictions_size, title=title, data_split=num_splits)
+            else:
+                logs.append(f"LOG: Model {model.get('model')} was not found!")
+    _export_results(results_order)
+    _export_logs()
 
 
 def _dataset_to_series(filename: str, date_parser=None):
@@ -496,11 +642,10 @@ def _dataset_to_series(filename: str, date_parser=None):
     return series
 
 
-def _export_results(output_folder: str, results_order: str = "name"):
+def _export_results(results_order: str = "name"):
     """Exports the results list into a .csv file ordered by the model order
 
     Args:
-        output_folder (str): name of the output folder of the model.
         results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse"). Defaults to
             "name".
     """
@@ -523,7 +668,7 @@ def _export_results(output_folder: str, results_order: str = "name"):
 
     results.sort(key=lambda line: float(line[order_num]))
 
-    results_file = CSVWriter(os.path.join(output_folder, "results_summary.csv"), ("Model", "Execution Time (sec)",
+    results_file = CSVWriter(os.path.join(OUTPUT_FOLDER, "results_summary.csv"), ("Model", "Execution Time (sec)",
                                                                                   "MAE", "MSE", "RMSE"))
     results_file.write_at_once(results)
     results_file.close()
@@ -531,13 +676,9 @@ def _export_results(output_folder: str, results_order: str = "name"):
     print(f"Results list file finished. Ordered by {order_name}.")
 
 
-def _export_logs(output_folder: str):
-    """Exports the log list into a .txt file
-
-    Args:
-        output_folder (str): name of the output folder of the model.
-    """
-    log_file = open(os.path.join(output_folder, "log.txt"), "w")
+def _export_logs():
+    """Exports the log list into a .txt file"""
+    log_file = open(os.path.join(OUTPUT_FOLDER, "log.txt"), "w")
     for log in logs:
         log_file.write(log)
         log_file.write("\n")

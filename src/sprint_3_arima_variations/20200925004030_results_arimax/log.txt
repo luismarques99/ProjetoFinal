@@ -1,8 +1,0 @@
-LOG: Model SpeedDifference_arima(1,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arima(2,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arima(3,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arima(4,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arimax(1,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arimax(2,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arimax(3,2,3)_predictions_15_crossvalidation_3 exported with success.
-LOG: Model SpeedDifference_arimax(4,2,3)_predictions_15_crossvalidation_3 exported with success.

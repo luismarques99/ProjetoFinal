@@ -1,0 +1,5 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"DailyBirths_arima(3,2,3)_predictions_75_crossvalidation_3",-1,-1,-1,-1
+"DailyBirths_arima(4,2,3)_predictions_75_crossvalidation_3",95.54750776290894,5.46365179691543,43.59690138958953,6.60279496801086
+"DailyBirths_arima(2,2,3)_predictions_75_crossvalidation_3",62.728878021240234,5.528549386799396,46.53310340978998,6.821517676425825
+"DailyBirths_arima(1,2,3)_predictions_75_crossvalidation_3",39.31620812416077,5.62680971403741,48.19910488934967,6.94255751789999

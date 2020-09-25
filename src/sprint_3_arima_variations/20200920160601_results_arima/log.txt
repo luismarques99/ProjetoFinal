@@ -1,4 +1,0 @@
-LOG: Model DailyBirths_arima(1,2,3)_predictions_12_crossvalidation_3 exported with an error! IndexError: tuple index out of range
-LOG: Model DailyBirths_arima(2,2,3)_predictions_12_crossvalidation_3 exported with an error! IndexError: tuple index out of range
-LOG: Model DailyBirths_arima(3,2,3)_predictions_12_crossvalidation_3 exported with an error! IndexError: tuple index out of range
-LOG: Model DailyBirths_arima(4,2,3)_predictions_12_crossvalidation_3 exported with an error! IndexError: tuple index out of range

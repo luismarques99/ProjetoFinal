@@ -1,0 +1,9 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"SpeedDifference_arimax(1,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDifference_arimax(2,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDifference_arimax(3,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDifference_arimax(4,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDifference_arima(2,2,3)_predictions_15_crossvalidation_3",15.850599527359009,5.3970920899117,51.8794287475878,7.202737587028129
+"SpeedDifference_arima(1,2,3)_predictions_15_crossvalidation_3",15.84365725517273,5.499559273483908,57.39663920992533,7.576056969817831
+"SpeedDifference_arima(4,2,3)_predictions_15_crossvalidation_3",16.392475605010986,5.760981212412381,57.565632892065224,7.587201914544335
+"SpeedDifference_arima(3,2,3)_predictions_15_crossvalidation_3",13.13033652305603,5.753467111284743,59.259107949540244,7.697993761334199

@@ -80,7 +80,7 @@ class ArimaImprovedModel:
         self.starting_time = time.time()
         try:
             # Fazer as previsoes todas de uma vez
-            # model = ARIMA(self.history, order=self.arima_parameters)
+            # model = ARIMA(endog=self.history, order=self.arima_parameters)
             # model_fit = model.fit()
             # predictions = model_fit.forecast(steps=self.num_predictions)
 
@@ -239,7 +239,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             # # Fazer as previsoes todas de uma vez
             # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
             # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
-            # model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
+            # model = ARIMA(endog=self.history, order=self.arima_parameters, exog=history_extra)
             # model_fit = model.fit()
             # predictions = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
 
@@ -544,22 +544,22 @@ def init():
             "arima_parameters": arima_parameters,
             "exog_variables": ("precipitation", "week_day")
         },
-        {
-            "model": SarimaImprovedModel,
-            "arima_parameters": arima_parameters,
-            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        },
-        {
-            "model": SarimaMultivariateImprovedModel,
-            "arima_parameters": arima_parameters,
-            "exog_variables": ("precipitation", "week_day"),
-            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        }
+        # {
+        #     "model": SarimaImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        # },
+        # {
+        #     "model": SarimaMultivariateImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "exog_variables": ("precipitation", "week_day"),
+        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        # }
     ]
 
     num_predictions = 15
 
-    title = "Speed Difference"
+    title = "Births test"
 
     num_splits = 3
 

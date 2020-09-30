@@ -19,7 +19,7 @@
 
 ## Assuntos tratados:
 
-- Discussão sobre os modelos implementados e sobre melhoramentos a fazer nos mesmos modelos.
+- Discussão sobre os modelos implementados e sobre melhoramentos a fazer nos mesmos modelos;
 - Discussão sobre alguns tópicos relativos ao relatório final (termos importantes e capas).
 
 ## Tarefas a realizar:
@@ -31,6 +31,11 @@
     - "SarimaMultivariateImprovedModel";
 - Terminar pesquisa sobre os termos falados e inseri-los no [relatório](../report).
 
-<!-- ## Retrospetiva:
+## Retrospetiva:
 
-`16-09-2020` -->
+`29-09-2020`
+
+- Modelo Arima e variantes do mesmo concluidos com sucesso;
+- Adicionar aos modelos o particionamento do dataset com a biblioteca `sklearn.model_selection.TimeSeriesSplit`;
+- Analisar caso das previsões passo a passo;
+- Gráficos exportados apenas devem conter dados testados e as previsões dos mesmos.

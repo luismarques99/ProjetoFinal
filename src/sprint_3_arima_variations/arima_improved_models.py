@@ -8,7 +8,7 @@ from datetime import datetime
 from math import sqrt
 from pandas import read_csv, DataFrame
 from matplotlib import pyplot
-from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
@@ -81,16 +81,16 @@ class ArimaImprovedModel:
         try:
             # Fazer as previsoes todas de uma vez
             # model = ARIMA(endog=self.history, order=self.arima_parameters)
-            # model_fit = model.fit()
-            # predictions = model_fit.forecast(steps=self.num_predictions)
+            # model_fit = model.fit(disp=0)
+            # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions)
 
             # Fazer uma previsao de cada vez
             predictions = list()
             for timestep in range(self.num_predictions):
                 model = ARIMA(self.history, order=self.arima_parameters)
-                model_fit = model.fit()
+                model_fit = model.fit(disp=0)
                 output = model_fit.forecast()
-                prediction = output[0]
+                prediction = output[0][0]
                 predictions.append(prediction)
                 obs = self.test[timestep]
                 self.history.append(obs)
@@ -103,7 +103,6 @@ class ArimaImprovedModel:
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
-            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -112,6 +111,7 @@ class ArimaImprovedModel:
             self.mse = -1
             self.rmse = -1
             # If it returns an error the model folder is removed
+            self.file.close()
             shutil.rmtree(self.folder)
 
         else:
@@ -120,6 +120,7 @@ class ArimaImprovedModel:
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
+            self.file.close()
 
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
@@ -236,12 +237,12 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
         """Executes the model"""
         self.starting_time = time.time()
         try:
-            # # Fazer as previsoes todas de uma vez
+            # Fazer as previsoes todas de uma vez
             # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
             # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
             # model = ARIMA(endog=self.history, order=self.arima_parameters, exog=history_extra)
-            # model_fit = model.fit()
-            # predictions = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
+            # model_fit = model.fit(disp=0)
+            # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
 
             # Fazer uma previsao de cada vez
             predictions = list()
@@ -249,9 +250,9 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
                 history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
                 test_extra = tuple(self.exog_values[-len(self.test) + timestep])
                 model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
-                model_fit = model.fit()
+                model_fit = model.fit(disp=0)
                 output = model_fit.forecast(exog=test_extra)
-                prediction = output[0]
+                prediction = output[0][0]
                 predictions.append(prediction)
                 obs = self.test[timestep]
                 self.history.append(obs)
@@ -264,7 +265,6 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
-            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -272,6 +272,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             self.mae = -1
             self.mse = -1
             self.rmse = -1
+            self.file.close()
             # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
 
@@ -281,6 +282,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
+            self.file.close()
 
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
@@ -341,7 +343,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
         try:
             # Fazer as previsoes todas de uma vez
             # model = ARIMA(self.history, order=self.arima_parameters)
-            # model_fit = model.fit()
+            # model_fit = model.fit(disp=0)
             # predictions = model_fit.forecast(steps=self.num_predictions)
 
             # Fazer uma previsao de cada vez
@@ -349,7 +351,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
             for timestep in range(self.num_predictions):
                 model = SARIMAX(self.history, order=self.arima_parameters, seasonal_order=self.season_parameters,
                                 enforce_stationarity=False, enforce_invertibility=False)
-                model_fit = model.fit()
+                model_fit = model.fit(disp=0)
                 output = model_fit.forecast()
                 prediction = output[0]
                 predictions.append(prediction)
@@ -364,7 +366,6 @@ class SarimaImprovedModel(ArimaImprovedModel):
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
-            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -372,6 +373,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
             self.mae = -1
             self.mse = -1
             self.rmse = -1
+            self.file.close()
             # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
 
@@ -381,6 +383,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
             self.rmse = sqrt(self.mse)
+            self.file.close()
 
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
@@ -442,8 +445,8 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
             # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
             # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
             # model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
-            # model_fit = model.fit()
-            # predictions = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
+            # model_fit = model.fit(disp=0)
+            # predictions= model_fit.forecast(steps=self.num_predictions, exog=test_extra)
 
             # Fazer uma previsao de cada vez
             predictions = list()
@@ -453,7 +456,7 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
                 model = SARIMAX(self.history, exog=history_extra, order=self.arima_parameters,
                                 seasonal_order=self.season_parameters, enforce_stationarity=False,
                                 enforce_invertibility=False)
-                model_fit = model.fit()
+                model_fit = model.fit(disp=0)
                 output = model_fit.forecast(exog=test_extra)
                 prediction = output[0]
                 predictions.append(prediction)
@@ -468,7 +471,6 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
 
             self._export_plot()
-            self.file.close()
 
         except Exception as err:
             logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
@@ -476,6 +478,7 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
             self.mae = -1
             self.mse = -1
             self.rmse = -1
+            self.file.close()
             # If it returns an error the model folder is removed
             shutil.rmtree(self.folder)
 
@@ -484,6 +487,7 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
             self.execution_time = time.time() - self.starting_time
             self.mae = mean_absolute_error(self.test, self.predictions)
             self.mse = mean_squared_error(self.test, self.predictions)
+            self.file.close()
             self.rmse = sqrt(self.mse)
 
         finally:
@@ -544,22 +548,22 @@ def init():
             "arima_parameters": arima_parameters,
             "exog_variables": ("precipitation", "week_day")
         },
-        # {
-        #     "model": SarimaImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        # },
-        # {
-        #     "model": SarimaMultivariateImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "exog_variables": ("precipitation", "week_day"),
-        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        # }
+        {
+            "model": SarimaImprovedModel,
+            "arima_parameters": arima_parameters,
+            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        },
+        {
+            "model": SarimaMultivariateImprovedModel,
+            "arima_parameters": arima_parameters,
+            "exog_variables": ("precipitation", "week_day"),
+            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        }
     ]
 
     num_predictions = 15
 
-    title = "Births test"
+    title = "SpeedDiff"
 
     num_splits = 3
 

@@ -12,8 +12,7 @@ from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
-
-# from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import TimeSeriesSplit
 
 ROOT_PATH = os.path.join(os.path.dirname(os.path.abspath(__name__)))
 PATH = os.path.join(ROOT_PATH, "src", "sprint_3_arima_variations")
@@ -26,7 +25,7 @@ os.chdir(PATH)
 
 from src.utils.csv_writer import CSVWriter
 
-timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+timestamp = datetime.now().strftime("%Y.%m.%d.%H.%M.%S")
 OUTPUT_FOLDER = f"{timestamp}_results_arima"
 results = list()
 logs = list()
@@ -40,8 +39,9 @@ class ArimaImprovedModel:
     """
 
     # FIXME: Utilizar a classe TimeSeriesSplit para separar o dataset com os splits necessarios
+    # FIXME: Metodo _execute. Tratar dos datasets de treino dados pelos splits
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
-                 data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+                 num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an ArimaImprovedModel.
 
         Args:
@@ -51,7 +51,7 @@ class ArimaImprovedModel:
             arima_parameters (tuple): parameters of the arima model.
             title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
                 Defaults to "".
-            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_splits (int): number of splits to do in the dataset. Defaults to 0.
             num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
                 predictions_size is equal to zero.
             predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
@@ -60,31 +60,36 @@ class ArimaImprovedModel:
         self.series = series
         self.arima_parameters = arima_parameters
         self.title = title
-        self.data_split = data_split
+        self.data_split = 0
         self.variable_to_predict = variable_to_predict
         self._set_values()
         if predictions_size == 0.0:
             self.num_predictions = num_predictions
         else:
             self.num_predictions = int(len(self.values) * predictions_size)
-        self.train = self.values[:-self.num_predictions]
-        self.test = self.values[-self.num_predictions:]
-        self.history = [x for x in self.train]
-        self._set_name()
-        self._set_folder()
-        self._set_raw_file()
-        self._execute()
+        for train_index, test_index in TimeSeriesSplit(n_splits=num_splits).split(self.values):
+            print(f">>>TRAIN: {train_index}\n\n>>>TEST: {test_index}")
+            self.train = self.values[train_index].copy()
+            self.test = self.values[test_index].copy()
+            self.data_split += 1
+            # self.train = self.values[:-self.num_predictions]
+            # self.test = self.values[-self.num_predictions:]
+            self.history = [x for x in self.train]
+            self._set_name()
+            self._set_folder()
+            self._set_raw_file()
+            self._execute()
 
     def _execute(self):
         """Executes the model"""
         self.starting_time = time.time()
         try:
-            # Fazer as previsoes todas de uma vez
+            # Predict using forecast method
             # model = ARIMA(endog=self.history, order=self.arima_parameters)
             # model_fit = model.fit(disp=0)
             # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions)
 
-            # Fazer uma previsao de cada vez
+            # Make each forecast individually
             predictions = list()
             for timestep in range(self.num_predictions):
                 model = ARIMA(self.history, order=self.arima_parameters)
@@ -164,44 +169,21 @@ class ArimaImprovedModel:
 
     def _export_plot(self):
         """Exports the plot of the model"""
-        timesteps = numpy.arange(len(self.values))
-        train_size = 3
-        train_values = tuple([x for x in self.train[-train_size:]])
+        timesteps = numpy.arange(self.num_predictions)
 
-        if len(timesteps) <= 50:
-            train_size = len(self.train)
-            train_values = tuple([x for x in self.train])
-        elif self.num_predictions < 50:
-            timesteps = timesteps[-50:]
-            train_size = 50 - self.num_predictions
-            train_values = tuple([x for x in self.train[-train_size:]])
-        else:
-            timesteps = timesteps[-self.num_predictions - train_size:]
+        real_values = ([x for x in self.test])
 
-        real_values = (*[None for x in train_values[:-1]], train_values[-1], *[x for x in self.test])
-
-        prediction_values = (*[None for x in train_values], *[x for x in self.predictions])
+        prediction_values = ([x for x in self.predictions])
 
         pyplot.plot(timesteps, real_values, color="green", marker="^", label="Real values")
         pyplot.plot(timesteps, prediction_values, color="red", marker="X", label="Predictions")
-        pyplot.plot(timesteps[:train_size], train_values, color="blue", marker="o", label="Train values")
-
-        x_interval = 1.0
-        if timesteps[-1] > 99:
-            x_interval = 2.0
-        elif timesteps[-1] > 999:
-            x_interval = 3.0
-        elif timesteps[-1] > 9999:
-            x_interval = 4.0
-        elif timesteps[-1] > 99999:
-            x_interval = 5.0
 
         pyplot.ylabel(self.variable_to_predict)
         pyplot.xlabel("Timesteps")
-        pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, x_interval))
+        pyplot.xticks(numpy.arange(min(timesteps), max(timesteps) + 1, 1.0))
         pyplot.grid(which="major", alpha=0.5)
         pyplot.gcf().canvas.set_window_title(self.name)
-        pyplot.gcf().set_size_inches(15, 9)
+        pyplot.gcf().set_size_inches(8, 5)
         pyplot.savefig(os.path.join(self.folder, f"plot_{self.name}.png"), format="png", dpi=300)
         pyplot.close()
 
@@ -213,7 +195,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
     """
 
     def __init__(self, series: DataFrame, variable_to_predict: str, exog_variables: tuple, arima_parameters: tuple,
-                 title: str = "", data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+                 title: str = "", num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an ArimaMultivariateImprovedModel.
 
         Args:
@@ -224,27 +206,27 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             arima_parameters (tuple): parameters of the arima model.
             title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
                 Defaults to "".
-            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_splits (int): number of splits to do in the dataset. Defaults to 0.
             num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
                 predictions_size is equal to zero.
             predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
         """
         self.exog_variables = exog_variables
-        super().__init__(series, variable_to_predict, arima_parameters, title, data_split, num_predictions,
+        super().__init__(series, variable_to_predict, arima_parameters, title, num_splits, num_predictions,
                          predictions_size)
 
     def _execute(self):
         """Executes the model"""
         self.starting_time = time.time()
         try:
-            # Fazer as previsoes todas de uma vez
+            # Predict using forecast method
             # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
             # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
             # model = ARIMA(endog=self.history, order=self.arima_parameters, exog=history_extra)
             # model_fit = model.fit(disp=0)
             # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
 
-            # Fazer uma previsao de cada vez
+            # Make each forecast individually
             predictions = list()
             for timestep in range(self.num_predictions):
                 history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
@@ -317,7 +299,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
     """
 
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, season_parameters: tuple,
-                 title: str = "", data_split: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+                 title: str = "", num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an SarimaImprovedModel.
 
         Args:
@@ -328,25 +310,25 @@ class SarimaImprovedModel(ArimaImprovedModel):
             season_parameters (tuple): season parameters of the sarima model.
             title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
                 Defaults to "".
-            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_splits (int): number of splits to do in the dataset. Defaults to 0.
             num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
                 predictions_size is equal to zero.
             predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
         """
         self.season_parameters = season_parameters
-        super().__init__(series, variable_to_predict, arima_parameters, title, data_split, num_predictions,
+        super().__init__(series, variable_to_predict, arima_parameters, title, num_splits, num_predictions,
                          predictions_size)
 
     def _execute(self):
         """Executes the model"""
         self.starting_time = time.time()
         try:
-            # Fazer as previsoes todas de uma vez
+            # Predict using forecast method
             # model = ARIMA(self.history, order=self.arima_parameters)
             # model_fit = model.fit(disp=0)
             # predictions = model_fit.forecast(steps=self.num_predictions)
 
-            # Fazer uma previsao de cada vez
+            # Make each forecast individually
             predictions = list()
             for timestep in range(self.num_predictions):
                 model = SARIMAX(self.history, order=self.arima_parameters, seasonal_order=self.season_parameters,
@@ -414,7 +396,7 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
     """
 
     def __init__(self, series: DataFrame, variable_to_predict: str, exog_variables: tuple, arima_parameters: tuple,
-                 season_parameters: tuple, title: str = "", data_split: int = 0, num_predictions: int = 10,
+                 season_parameters: tuple, title: str = "", num_splits: int = 0, num_predictions: int = 10,
                  predictions_size: float = 0.0):
         """Creates an instance of an SarimaMultivariateImprovedModel.
 
@@ -427,28 +409,28 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
             season_parameters (tuple): season parameters of the sarima model.
             title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
                 Defaults to "".
-            data_split (int): split number of the dataset used in the model. Defaults to 0.
+            num_splits (int): number of splits to do in the dataset. Defaults to 0.
             num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
                 predictions_size is equal to zero.
             predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
         """
         self.exog_variables = exog_variables
         self.season_parameters = season_parameters
-        super().__init__(series, variable_to_predict, arima_parameters, title, data_split, num_predictions,
+        super().__init__(series, variable_to_predict, arima_parameters, title, num_splits, num_predictions,
                          predictions_size)
 
     def _execute(self):
         """Executes the model"""
         self.starting_time = time.time()
         try:
-            # # Fazer as previsoes todas de uma vez
+            # Predict using forecast method
             # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
             # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
             # model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
             # model_fit = model.fit(disp=0)
             # predictions= model_fit.forecast(steps=self.num_predictions, exog=test_extra)
 
-            # Fazer uma previsao de cada vez
+            # Make each forecast individually
             predictions = list()
             for timestep in range(self.num_predictions):
                 history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
@@ -536,7 +518,7 @@ def init():
     #         for q in range(0, 4):
     #             arima_parameters.append((p, d, q))
 
-    arima_parameters = [(2, 2, 3), (4, 2, 3)]
+    arima_parameters = [(1, 2, 3), (4, 2, 3)]
 
     models = [
         {
@@ -548,17 +530,17 @@ def init():
             "arima_parameters": arima_parameters,
             "exog_variables": ("precipitation", "week_day")
         },
-        {
-            "model": SarimaImprovedModel,
-            "arima_parameters": arima_parameters,
-            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        },
-        {
-            "model": SarimaMultivariateImprovedModel,
-            "arima_parameters": arima_parameters,
-            "exog_variables": ("precipitation", "week_day"),
-            "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        }
+        # {
+        #     "model": SarimaImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        # },
+        # {
+        #     "model": SarimaMultivariateImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "exog_variables": ("precipitation", "week_day"),
+        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
+        # }
     ]
 
     num_predictions = 15
@@ -576,7 +558,7 @@ def init():
 
 
 def run_models(dataset_name: str, models: list, variable_to_predict: str, title: str, num_splits: int,
-               results_order: str, num_predictions: int, predictions_size: float = 0, date_parser=None):
+               results_order: str, num_predictions: int = 10, predictions_size: float = 0, date_parser=None):
     """Parses the dataset (.csv file) into a DataFrame object and runs ARIMA models with the given dataset.
 
     Args:
@@ -600,26 +582,26 @@ def run_models(dataset_name: str, models: list, variable_to_predict: str, title:
             if model.get("model") == ArimaImprovedModel:
                 model.get("model")(series=series, variable_to_predict=variable_to_predict,
                                    arima_parameters=arima_parameters, num_predictions=num_predictions,
-                                   predictions_size=predictions_size, title=title, data_split=num_splits)
+                                   predictions_size=predictions_size, title=title, num_splits=num_splits)
             elif model.get("model") == ArimaMultivariateImprovedModel:
                 exog_variables = model.get("exog_variables")
                 model.get("model")(series=series, variable_to_predict=variable_to_predict,
                                    exog_variables=exog_variables, arima_parameters=arima_parameters,
                                    num_predictions=num_predictions, predictions_size=predictions_size, title=title,
-                                   data_split=num_splits)
+                                   num_splits=num_splits)
             elif model.get("model") == SarimaImprovedModel:
                 for season_parameters in model.get("season_parameters"):
                     model.get("model")(series=series, variable_to_predict=variable_to_predict,
                                        arima_parameters=arima_parameters, season_parameters=season_parameters,
                                        num_predictions=num_predictions, predictions_size=predictions_size, title=title,
-                                       data_split=num_splits)
+                                       num_splits=num_splits)
             elif model.get("model") == SarimaMultivariateImprovedModel:
                 exog_variables = model.get("exog_variables")
                 for season_parameters in model.get("season_parameters"):
                     model.get("model")(series=series, variable_to_predict=variable_to_predict,
                                        exog_variables=exog_variables, arima_parameters=arima_parameters,
                                        season_parameters=season_parameters, num_predictions=num_predictions,
-                                       predictions_size=predictions_size, title=title, data_split=num_splits)
+                                       predictions_size=predictions_size, title=title, num_splits=num_splits)
             else:
                 logs.append(f"LOG: Model {model.get('model')} was not found!")
     _export_results(results_order)

@@ -1,0 +1,2 @@
+LOG: Model Birthstest_arima(2,2,3)_predictions_15_crossvalidation_3 exported with an error! LinAlgError: SVD did not converge
+LOG: Model Birthstest_arima(4,2,3)_predictions_15_crossvalidation_3 exported with success.

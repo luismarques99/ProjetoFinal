@@ -1,0 +1,5 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"SpeedDiff_arima(4,2,3)_predictions_72",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_72",-1,-1,-1,-1
+"SpeedDiff_arima(1,2,3)_predictions_72",76.2554132938385,3.3133613215523186,29.418887346416074,5.423918080725047
+"SpeedDiff_arimax(1,2,3)_predictions_72",95.5866551399231,3.338100494885286,29.866706642649635,5.4650440659385024

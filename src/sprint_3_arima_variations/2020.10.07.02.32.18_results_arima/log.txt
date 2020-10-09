@@ -1,0 +1,16 @@
+LOG: Model SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_1 exported with an error! LinAlgError: SVD did not converge
+LOG: Model SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_2 exported with an error! ValueError: x and y must have same first dimension, but have shapes (15,) and (120,)
+LOG: Model SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_3 exported with an error! ValueError: x and y must have same first dimension, but have shapes (15,) and (120,)
+LOG: Model SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_1 exported with an error! ValueError: The computed initial MA coefficients are not invertible
+You should induce invertibility, choose a different model order, or you can
+pass your own start_params.
+LOG: Model SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_2 exported with an error! ValueError: x and y must have same first dimension, but have shapes (15,) and (120,)
+LOG: Model SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_3 exported with an error! ValueError: x and y must have same first dimension, but have shapes (15,) and (120,)
+LOG: Model SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_1 exported with an error! LinAlgError: SVD did not converge
+LOG: Model SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_2 exported with an error! ValueError: x and y must have same first dimension, but have shapes (15,) and (120,)
+LOG: Model SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_3 exported with an error! LinAlgError: SVD did not converge
+LOG: Model SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_1 exported with an error! ValueError: The computed initial MA coefficients are not invertible
+You should induce invertibility, choose a different model order, or you can
+pass your own start_params.
+LOG: Model SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_2 exported with an error! LinAlgError: SVD did not converge
+LOG: Model SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_3 exported with an error! ValueError: x and y must have same first dimension, but have shapes (15,) and (120,)

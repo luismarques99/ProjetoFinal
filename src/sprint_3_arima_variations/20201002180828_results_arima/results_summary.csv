@@ -1,0 +1,13 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"Birthstest_arima(2,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_arimax(2,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_arimax(4,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarima(2,2,3)(0,0,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarima(2,2,3)(0,1,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarima(4,2,3)(0,0,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarima(4,2,3)(0,1,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarimax(2,2,3)(0,0,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarimax(2,2,3)(0,1,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarimax(4,2,3)(0,0,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_sarimax(4,2,3)(0,1,1,24)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_arima(4,2,3)_predictions_15_crossvalidation_3",31.134048461914062,5.756860212648929,58.50138061678456,7.6486195235993115

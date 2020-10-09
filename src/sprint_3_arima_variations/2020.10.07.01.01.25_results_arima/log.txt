@@ -1,0 +1,4 @@
+LOG: Model SpeedDiff_arima(1,2,3)_predictions_72 exported with success.
+LOG: Model SpeedDiff_arima(4,2,3)_predictions_72 exported with an error! LinAlgError: SVD did not converge
+LOG: Model SpeedDiff_arimax(1,2,3)_predictions_72 exported with success.
+LOG: Model SpeedDiff_arimax(4,2,3)_predictions_72 exported with an error! LinAlgError: SVD did not converge

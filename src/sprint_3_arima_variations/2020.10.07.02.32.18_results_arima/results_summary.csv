@@ -1,0 +1,13 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_1",-1,-1,-1,-1
+"SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_2",-1,-1,-1,-1
+"SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_1",-1,-1,-1,-1
+"SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_2",-1,-1,-1,-1
+"SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_1",-1,-1,-1,-1
+"SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_2",-1,-1,-1,-1
+"SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_1",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_2",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1

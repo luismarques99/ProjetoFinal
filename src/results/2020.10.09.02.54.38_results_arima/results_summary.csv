@@ -1,0 +1,13 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_1",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_1",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_2",-1,-1,-1,-1
+"SpeedDiff_arimax(4,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_2",8.429712057113647,0.3863972317002109,0.17293853210778598,0.41585878866243287
+"SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_2",12.712613582611084,0.41196228043522987,0.19971916779536353,0.44689950525298583
+"SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_2",35.09105944633484,0.67084667540561,0.5543517148947674,0.7445479936812451
+"SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_1",15.888976812362671,3.367502360913987,23.984957736878993,4.897444000382137
+"SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_1",12.78636646270752,3.444645163427896,25.82468592020841,5.0817994765839005
+"SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_3",21.68249797821045,5.482114875372973,56.350156969636664,7.506674161680169
+"SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_3",18.882512092590332,5.518057084717905,58.164220418952624,7.62654708363835
+"SpeedDiff_arima(4,2,3)_predictions_15_crossvalidation_3",27.865475177764893,5.756860212648929,58.50138061678456,7.6486195235993115

@@ -1,0 +1,3 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"Birthstest_arima(2,2,3)_predictions_15_crossvalidation_3",-1,-1,-1,-1
+"Birthstest_arima(4,2,3)_predictions_15_crossvalidation_3",33.86939096450806,5.756860212648929,58.50138061678456,7.6486195235993115

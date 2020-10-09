@@ -37,9 +37,7 @@ class ArimaImprovedModel:
 
     Author: Luis Marques
     """
-
-    # FIXME: Utilizar a classe TimeSeriesSplit para separar o dataset com os splits necessarios
-    # FIXME: Metodo _execute. Tratar dos datasets de treino dados pelos splits
+    
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
                  num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an ArimaImprovedModel.
@@ -68,16 +66,21 @@ class ArimaImprovedModel:
         else:
             self.num_predictions = int(len(self.values) * predictions_size)
         for train_index, test_index in TimeSeriesSplit(n_splits=num_splits).split(self.values):
-            print(f">>>TRAIN: {train_index}\n\n>>>TEST: {test_index}")
             self.train = self.values[train_index].copy()
             self.test = self.values[test_index].copy()
+            self.train = [*self.train, *self.test[:-self.num_predictions]]
+            self.test = self.test[-self.num_predictions:]
+            # train_index = [*train_index, *test_index[:-self.num_predictions]]
+            # test_index = test_index[-self.num_predictions:]
             self.data_split += 1
             # self.train = self.values[:-self.num_predictions]
             # self.test = self.values[-self.num_predictions:]
             self.history = [x for x in self.train]
+            # history_index = [x for x in train_index]
             self._set_name()
             self._set_folder()
             self._set_raw_file()
+            # print(f">>>TRAIN: {train_index}\n\n>>>TEST: {test_index}\n\n>>>HISTORY: {history_index}")
             self._execute()
 
     def _execute(self):
@@ -101,7 +104,7 @@ class ArimaImprovedModel:
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            self.train = self.scaler.inverse_transform([self.train])[0]
+            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -240,7 +243,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            self.train = self.scaler.inverse_transform([self.train])[0]
+            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -341,7 +344,7 @@ class SarimaImprovedModel(ArimaImprovedModel):
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            self.train = self.scaler.inverse_transform([self.train])[0]
+            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -446,7 +449,7 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            self.train = self.scaler.inverse_transform([self.train])[0]
+            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):

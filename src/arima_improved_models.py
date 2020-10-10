@@ -37,7 +37,7 @@ class ArimaImprovedModel:
 
     Author: Luis Marques
     """
-    
+
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
                  num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
         """Creates an instance of an ArimaImprovedModel.
@@ -70,17 +70,11 @@ class ArimaImprovedModel:
             self.test = self.values[test_index].copy()
             self.train = [*self.train, *self.test[:-self.num_predictions]]
             self.test = self.test[-self.num_predictions:]
-            # train_index = [*train_index, *test_index[:-self.num_predictions]]
-            # test_index = test_index[-self.num_predictions:]
             self.data_split += 1
-            # self.train = self.values[:-self.num_predictions]
-            # self.test = self.values[-self.num_predictions:]
             self.history = [x for x in self.train]
-            # history_index = [x for x in train_index]
             self._set_name()
             self._set_folder()
             self._set_raw_file()
-            # print(f">>>TRAIN: {train_index}\n\n>>>TEST: {test_index}\n\n>>>HISTORY: {history_index}")
             self._execute()
 
     def _execute(self):
@@ -104,7 +98,6 @@ class ArimaImprovedModel:
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -243,7 +236,6 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -344,7 +336,6 @@ class SarimaImprovedModel(ArimaImprovedModel):
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -449,7 +440,6 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
                 self.history.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
-            # self.train = self.scaler.inverse_transform([self.train])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
 
             for timestep in range(self.num_predictions):
@@ -506,22 +496,25 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
 
 # Functions
 def init():
-    # dataset = "shampoo-sales.csv"
-    # dataset = "daily-births.csv"
-    dataset = "N14Bosch_2019-04.csv"
+    dataset = "LinkNYC_kiosk.csv"
 
-    variable_to_predict = "speed_diff"
+    def parser(x):
+        return datetime.strptime(x, "%d/%m/%Y")
 
-    # def parser(x: int):
-    #     return datetime.strptime(f"190{x}", "%Y-%m")
+    variable_to_predict = "census"
 
-    # arima_parameters = list()
-    # for p in range(1, 6):
-    #     for d in range(0, 4):
-    #         for q in range(0, 4):
-    #             arima_parameters.append((p, d, q))
+    arima_parameters = list()
+    for p in range(1, 6):
+        for d in range(0, 4):
+            for q in range(0, 4):
+                arima_parameters.append((p, d, q))
 
-    arima_parameters = [(1, 2, 3), (4, 2, 3)]
+    sarima_parameters = list()
+    for p in range(1, 11):
+        for d in range(0, 4):
+            for q in range(0, 4):
+                for s in (24, 168, 720):
+                    sarima_parameters.append((p, d, q, s))
 
     models = [
         {
@@ -533,30 +526,28 @@ def init():
             "arima_parameters": arima_parameters,
             "exog_variables": ("precipitation", "week_day")
         },
-        # {
-        #     "model": SarimaImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        # },
-        # {
-        #     "model": SarimaMultivariateImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "exog_variables": ("precipitation", "week_day"),
-        #     "season_parameters": [(0, 0, 1, 24), (0, 1, 1, 24)]
-        # }
+        {
+            "model": SarimaImprovedModel,
+            "arima_parameters": arima_parameters,
+            "season_parameters": sarima_parameters
+        },
+        {
+            "model": SarimaMultivariateImprovedModel,
+            "arima_parameters": arima_parameters,
+            "exog_variables": ("precipitation", "week_day"),
+            "season_parameters": sarima_parameters
+        }
     ]
 
-    num_predictions = 15
+    num_predictions = 25
 
-    title = "SpeedDiff"
+    title = "Census"
 
-    num_splits = 3
+    num_splits = 5
 
     results_order = "mse"
 
-    # run_models(dataset_name=dataset, variable_to_predict=variable_to_predict, date_parser=parser, models=models,
-    #            num_predictions=num_predictions, title=title, num_splits=num_splits, results_order=results_order)
-    run_models(dataset_name=dataset, variable_to_predict=variable_to_predict, models=models,
+    run_models(dataset_name=dataset, variable_to_predict=variable_to_predict, date_parser=parser, models=models,
                num_predictions=num_predictions, title=title, num_splits=num_splits, results_order=results_order)
 
 

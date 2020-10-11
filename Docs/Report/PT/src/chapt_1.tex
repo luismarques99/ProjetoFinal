@@ -17,14 +17,89 @@ decorre do desenvolvimento do projeto final da Licenciatura em Engenharia Inform
 Escola Superior de Tecnologia e Gestão do Politécnico do Porto.\\
 
 \subsection{Objetivos}
-Este projeto irá focar no estudo de um modelo de aprendizagem e as suas variantes (\acrshort{arima})
+Este projeto foi focado no estudo de um modelo de aprendizagem (\acrshort{arima}) e as suas
+variantes, com o objetivo de testar vários \textit{\glspl{dataset}} e desenvolver uma
+plataforma que informe quais os melhores modelos e as melhores configurações dos mesmo para
+cada \textit{\gls{dataset}}. Posto isto, cada modelo teve de ser estudado e compreendido de
+forma parametrizada para que a integração com qualquer conjunto de dados não cause nenhum
+problema.\\
 
 \subsection{Resultados}
-
+«Resultados obtidos»\\
 
 \subsection{Estrutura}
+O presente documento está dividido em 5 capítulo principais:
+\begin{enumerate}
+    \item Contextualização e Motivação - este capítulo pretende apresentar de forma sucinta
+    e objetiva as circunstâncias a que surgiu o projeto, contendo o contexto, objetivos e
+    resultados do mesmo. Neste capítulo está contida ainda uma parte destinada à fundamentação
+    teórica do projeto, dando a conhecer, de uma forma um pouco abrangente, os principais
+    tópicos.
+    \item Concetualização do Problema - nesta secção estão detalhados os aspetos mais técnicos
+    do problema, visto que contém a definição dos requisitos e a definição de uma arquitetura
+    concetual.
+    \item Metodologia de Operacionalização do Trabalho - neste capítulo é explorada e a
+    metodologia de trabalho utilizada. Contém também, no final, ums descrição sobre aspetos
+    mais técnicos do projeto.
+    \item Discussão dos Resultados - é nesta secção que serão discutidos os resultados
+    obtidos e a explicação de possíveis controversias.
+    \item Conclusão - este capítulo visa realizar uma conclusão global do projeto e, por fim,
+    uma descrição de possíveis melhoramentos futuros no trabalho desenvolvido.
+\end{enumerate} \par
 
 
 \section{Fundamentação Teórica}
+
+\subsection{Série Temporal}
+Tal como é abordado em temas como a estatística, economia e matemática aplicada, uma série
+temporal é uma coleção de observações feitas sequencialmente ao longo do tempo. Em modelos
+de regressão linear a ordem das observações é irrelevante, mas em séries temporais a ordem
+dos dados é fundamental.\\
+\indent A análise de séries temporais compreende métodos para analisar os dados, a fim de
+extrair estatísticas significativas e outras características. Para fazer uma previsão
+com uma série temporal é utilizado um modelo para prever valores futuros com base em
+valores observados anteriormente.\\
+\indent Existem 4 componentes que uma série temporal pode ter: i) Nível: valor base da série
+se fosse uma linha reta; ii) Tendência (opcional): comportamento, normalmente linear,
+crescente ou decrescente ao longo do tempo; iii) Sazonalidade (opcional): padrões repetitivos
+ou ciclos de comportamento ao longo do tempo; iv) Ruído (opcional): variações nas observações
+que não podem ser explicadas pelo modelo.\\
+\indent Para concluir, todas as séries temporais têm nível e a maior parte também tem ruído.
+No entanto, a tendência e a sazonalidade são opcionais.\\
+
+\subsection{Grid search}
+\textit{Grid search} (em português, pesquisa em grelha) é o processo de coleção de dados para
+configurar os parâmetros ideais para um determinado modelo. Dependendo do tipo de modelo
+utilizado, alguns parâmetros são necessários. Esta pesquisa não se aplica apenas a um
+tipo de modelo, ela pode ser aplicada a ao modelo de aprendizagem para calcular os melhores
+parâmetros a serem usados para qualquer modelo.\\
+\indent Um ponto importante a sublinhas é que esta pesquisa pode ser extremamente cara em
+termos computacionais e pode levar muito tempo até obter resultados. O \textit{grid search}
+construirá um modelo em cada combinação de parâmetros possível. Ele itera por meio de cada
+combinação de parâmetros e armazena um modelo para cada combinação.\\
+
+\subsection{Modelo ARIMA}
+O modelo de Média Móvel Integrada Autoregressiva - \textit{\acrfull{arima}} - foi o modelo
+utilizado para realizar este trabalho, sendo que, todo o projeto foi abordado em torno
+deste modelo e variações do mesmo. \textit{\acrshort{arima}} significa:
+\begin{itemize}
+    \item AR: "\textit{Autoregression}" (Autoregressão) - Um modelo que usa a relação entre
+    uma observação e um número de observações atrasadas.
+    \item I: "\textit{Integrated}" (Integrado) - O uso de diferenciação de observações (por
+    exemplo, retirar uma observação de uma observação, no passo anterior) de forma a série
+    temporal estacionária.
+    \item MA: "\textit{Moving Average}" (Média Móvel) - Um modelo que usa a dependência
+    entre uma observação e o erro residual de um modelo de média móvel aplicado a
+    observações atrasadas.
+\end{itemize} \par
+\vspace{5pt}
+\indent Cada um destes componentes está especificado no modelo como um parâmetro. A notação
+utilizada é ARIMA(p, d, q):
+\begin{itemize}
+    \item p: Ordem de atraso - número de observações atrasadas incluídas no modelo.
+    \item d: Grau de diferenciação - número de vezes que observações brutas são
+    diferenciadas.
+    \item q: Ordem da média móvel - tamanho da janela de media móvel
+\end{itemize}
 
 \newpage

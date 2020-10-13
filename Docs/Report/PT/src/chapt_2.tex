@@ -7,17 +7,64 @@
 \vspace{20pt}
 
 \section{Requisitos}
-No princípio do projeto, foram definidos os requisitos para o desenvolvimento do mesmo,
-sendo eles:
+Ao longo da realização do projeto, foram sendo definidos os requisitos para o
+desenvolvimento do mesmo, sendo eles:
 \begin{itemize}
     \item Estudar modelo \textit{\acrshort{arima}} e variantes;
     \item Construir um serviço de testes de \textit{\glspl{dataset}} com os modelos
     estudados anteriormente;
-    \item Testar varios datasets e guardar melhores modelos e configurações dos mesmos;
-    \item Integrar projeto com \gls{google colab}.
-\end{itemize}
+    \item Testar varios \textit{\glspl{dataset}} e guardar melhores modelos e configurações
+    dos mesmos;
+    \item Integrar projeto com \textit{\gls{google colab}}.
+\end{itemize} \par
+
+\indent Destas necessidades definidas em cima, podemos retirar algumas tarefas e subtarefas
+implícitas em cada uma.\par
+
+\subsection{Estudo do Modelo}
+\begin{itemize}
+    \item Estudo de algumas bibliotecas de \textit{\gls{python}} utilzadas ao longo do
+    trabalho;
+    \item Realização de alguns exercícios de \textit{\acrlong{ml}} com
+    \textit{\gls{python}} (e.g., abrir e manusear um \textit{\gls{dataset}}, formatar as
+    datas, imprimir ou exportar os dados, mostrar ou exportar um gráfico);
+    \item Estudo do modelo \textit{\acrshort{arima}} (e.g., propriedades, funcionamento,
+    características)
+    \item Estudo das variantes do modelo \textit{\acrshort{arima}} que são:
+    \textit{\acrshort{arimax}} (Média Móvel Integrada Autoregressiva com \gls{variaveis
+    exogenas}), \textit{\acrshort{sarima}} (Média Móvel Integrada Autoregressiva Sazonal)
+    e \textit{\acrshort{sarimax}} (Média Móvel Integrada Autoregressiva Sazonal com
+    \gls{variaveis exogenas}).
+\end{itemize}\par
+
+\subsection{Construção do Serviço de Testes}
+\begin{itemize}
+    \item Estruturação dos \textit{\glspl{script}};
+    \item Realização dos \textit{\glspl{script}} na linguagem \textit{\gls{python}};
+    \item Testar a veracidade e qualidade do programa desenvolvido.
+\end{itemize}\par
+
+\subsection{Teste dos Datasets}
+\begin{itemize}
+    \item Executar uma \textit{\gls{grid search}} para encontrar melhores modelos e melhores
+    configurações;
+    \item Executar os melhores modelos com as melhores configurações e guardar resultados.
+\end{itemize}\par
+
+\subsection{Integração com \textit{Google Colab}}
+\begin{itemize}
+    \item Estudo da plataforma \textit{\gls{google colab}} (e.g., funcionalidades,
+    compatiblidade);
+    \item Colocar \textit{\glspl{script}} na plataforma;
+    \item Correr alguns testes.
+\end{itemize}\par
+\vspace{5pt}
+
 
 \section{Arquitetura Concetual}
-
+«Arquitetura concetual - Nesta arquitetura deverá ser claro o que foi efetivamente
+desenvolvido pelo Estudante e aquilo que foi desenvolvido por terceiros. A arquitetura
+deverá realçar aspetos relacionadas com integração, protocolos, entre outros, e que o
+estudante deverá clarificar.»
 
 \newpage

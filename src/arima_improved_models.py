@@ -65,17 +65,26 @@ class ArimaImprovedModel:
             self.num_predictions = num_predictions
         else:
             self.num_predictions = int(len(self.values) * predictions_size)
-        for train_index, test_index in TimeSeriesSplit(n_splits=num_splits).split(self.values):
-            self.train = self.values[train_index].copy()
-            self.test = self.values[test_index].copy()
-            self.train = [*self.train, *self.test[:-self.num_predictions]]
-            self.test = self.test[-self.num_predictions:]
-            self.data_split += 1
+        if num_splits == 0:
+            self.train = self.values[:-self.num_predictions]
+            self.test = self.values[-self.num_predictions:]
             self.history = [x for x in self.train]
             self._set_name()
             self._set_folder()
             self._set_raw_file()
             self._execute()
+        else:
+            for train_index, test_index in TimeSeriesSplit(n_splits=num_splits).split(self.values):
+                self.train = self.values[train_index].copy()
+                self.test = self.values[test_index].copy()
+                self.train = [*self.train, *self.test[:-self.num_predictions]]
+                self.test = self.test[-self.num_predictions:]
+                self.data_split += 1
+                self.history = [x for x in self.train]
+                self._set_name()
+                self._set_folder()
+                self._set_raw_file()
+                self._execute()
 
     def _execute(self):
         """Executes the model"""
@@ -503,47 +512,56 @@ def init():
 
     variable_to_predict = "census"
 
-    arima_parameters = list()
-    for p in range(1, 6):
-        for d in range(0, 4):
-            for q in range(0, 4):
-                arima_parameters.append((p, d, q))
+    # Grid search
+    # arima_parameters = list()
+    # for p in range(1, 6):
+    #     for d in range(0, 4):
+    #         for q in range(0, 4):
+    #             arima_parameters.append((p, d, q))
 
-    sarima_parameters = list()
-    for p in range(1, 11):
-        for d in range(0, 4):
-            for q in range(0, 4):
-                for s in (24, 168, 720):
-                    sarima_parameters.append((p, d, q, s))
+    arima_parameters = [(1, 2, 0), (3, 2, 0), (2, 2, 0), (4, 2, 0)]
+
+    # Grid search
+    # sarima_parameters = list()
+    # for p in range(1, 11):
+    #     for d in range(0, 4):
+    #         for q in range(0, 4):
+    #             for s in (24, 168):
+    #                 sarima_parameters.append((p, d, q, s))
+
+    sarima_parameters = [(1, 2, 0, 24), (1, 2, 0, 168)]
+
+    # exog_variables = ("wifi status", "tablet status", "phone status", "temp", "heating degree", "cooling degree")
+    exog_variables = ("temp", "heating degree", "cooling degree")
 
     models = [
         {
             "model": ArimaImprovedModel,
             "arima_parameters": arima_parameters
         },
-        {
-            "model": ArimaMultivariateImprovedModel,
-            "arima_parameters": arima_parameters,
-            "exog_variables": ("precipitation", "week_day")
-        },
+        # {
+        #     "model": ArimaMultivariateImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "exog_variables": exog_variables
+        # },
         {
             "model": SarimaImprovedModel,
             "arima_parameters": arima_parameters,
             "season_parameters": sarima_parameters
         },
-        {
-            "model": SarimaMultivariateImprovedModel,
-            "arima_parameters": arima_parameters,
-            "exog_variables": ("precipitation", "week_day"),
-            "season_parameters": sarima_parameters
-        }
+        # {
+        #     "model": SarimaMultivariateImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "exog_variables": exog_variables,
+        #     "season_parameters": sarima_parameters
+        # }
     ]
 
-    num_predictions = 25
+    num_predictions = 20
 
     title = "Census"
 
-    num_splits = 5
+    num_splits = 0
 
     results_order = "mse"
 

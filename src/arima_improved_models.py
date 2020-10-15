@@ -531,7 +531,6 @@ def init():
 
     sarima_parameters = [(1, 2, 0, 24), (1, 2, 0, 168)]
 
-    # exog_variables = ("wifi status", "tablet status", "phone status", "temp", "heating degree", "cooling degree")
     exog_variables = ("temp", "heating degree", "cooling degree")
 
     models = [
@@ -539,29 +538,29 @@ def init():
             "model": ArimaImprovedModel,
             "arima_parameters": arima_parameters
         },
-        # {
-        #     "model": ArimaMultivariateImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "exog_variables": exog_variables
-        # },
+        {
+            "model": ArimaMultivariateImprovedModel,
+            "arima_parameters": arima_parameters,
+            "exog_variables": exog_variables
+        },
         {
             "model": SarimaImprovedModel,
             "arima_parameters": arima_parameters,
             "season_parameters": sarima_parameters
         },
-        # {
-        #     "model": SarimaMultivariateImprovedModel,
-        #     "arima_parameters": arima_parameters,
-        #     "exog_variables": exog_variables,
-        #     "season_parameters": sarima_parameters
-        # }
+        {
+            "model": SarimaMultivariateImprovedModel,
+            "arima_parameters": arima_parameters,
+            "exog_variables": exog_variables,
+            "season_parameters": sarima_parameters
+        }
     ]
 
     num_predictions = 20
 
     title = "Census"
 
-    num_splits = 0
+    num_splits = 3
 
     results_order = "mse"
 
@@ -569,8 +568,8 @@ def init():
                num_predictions=num_predictions, title=title, num_splits=num_splits, results_order=results_order)
 
 
-def run_models(dataset_name: str, models: list, variable_to_predict: str, title: str, num_splits: int,
-               results_order: str, num_predictions: int = 10, predictions_size: float = 0, date_parser=None):
+def run_models(dataset_name: str, models: list, variable_to_predict: str, title: str, results_order: str,
+               num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0, date_parser=None):
     """Parses the dataset (.csv file) into a DataFrame object and runs ARIMA models with the given dataset.
 
     Args:
@@ -579,8 +578,8 @@ def run_models(dataset_name: str, models: list, variable_to_predict: str, title:
         title (str): title to be used in the output files to distinguish the models.
         variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
             dataset.
-        num_splits (int): number of splits in case of being cross validation models.
         results_order (str): order factor of the results list. ("name", "time", "mae", "mse" or "rmse").
+        num_splits (int): number of splits in case of being cross validation models. Defaults to 0.
         num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
             predictions_size is equal to zero.
         predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.

@@ -1,0 +1,8 @@
+LOG: Model Census_arima(1,2,0)_predictions_20 exported with success.
+LOG: Model Census_arima(3,2,0)_predictions_20 exported with success.
+LOG: Model Census_arima(2,2,0)_predictions_20 exported with success.
+LOG: Model Census_arima(4,2,0)_predictions_20 exported with success.
+LOG: Model Census_arimax(1,2,0)_predictions_20 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_arimax(3,2,0)_predictions_20 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_arimax(2,2,0)_predictions_20 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_arimax(4,2,0)_predictions_20 exported with an error! ValueError: new exog needed for each step

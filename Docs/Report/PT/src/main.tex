@@ -1,7 +1,9 @@
 \documentclass[a4paper, 11pt]{report}
 
 % Extra characters
-\usepackage[utf8]{inputenc}
+\usepackage[utf8]{inputenx}
+\usepackage[T1]{fontenc}
+\usepackage{dirtytalk}
 
 % Subfiles
 \usepackage{subfiles}
@@ -20,9 +22,7 @@
 \renewcommand{\familydefault}{\sfdefault}
 
 % Captions
-\usepackage{caption}
-\DeclareCaptionFormat{captionFormat}{\fontsize{9}{11}}
-\captionsetup{format=captionFormat}
+\usepackage[font=footnotesize]{caption}
 
 % Figures
 \usepackage{graphicx}
@@ -31,6 +31,20 @@
 % Tables
 \usepackage{booktabs}
 \usepackage{array}
+% Thin line to use in tables
+\arrayrulewidth=1pt\relax
+\makeatletter
+\def\thinhline{%
+  \noalign{\ifnum0=`}\fi\hrule \@height \thinarrayrulewidth \futurelet
+   \reserved@a\@xthinhline}
+\def\@xthinhline{\ifx\reserved@a\thinhline
+               \vskip\doublerulesep
+               \vskip-\thinarrayrulewidth
+             \fi
+      \ifnum0=`{\fi}}
+\makeatother
+\newlength{\thinarrayrulewidth}
+\setlength{\thinarrayrulewidth}{0.5\arrayrulewidth}
 
 % Improve justification document wide
 \usepackage{microtype}
@@ -50,11 +64,21 @@
 \usepackage[acronym, nogroupskip, toc]{glossaries}
 
 % Bibliography
+\usepackage[nottoc]{tocbibind}
+% \renewcommand\bibname{Referências}
 % \usepackage{biblatex}
-% \addbibresource{references.bib}
+% \addbibresource{libs/references.bib}
 
 % Appendices
 \usepackage[toc,page]{appendix}
+\addto\captionsportuguese{
+  \renewcommand\appendixname{Anexo}
+  \renewcommand\appendixpagename{Anexos}
+}
+
+% Code listings
+\usepackage{listings}
+\usepackage{xcolor}
 
 % Document bookmarks
 \usepackage{pdfpages}
@@ -89,9 +113,39 @@
 \input{libs/glossary.tex}
 
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolor}{rgb}{0.97,0.97,0.97}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolor},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=true,                  
+    tabsize=4
+}
+
+\lstset{style=mystyle}
+
+\renewcommand\lstlistingname{Excerto}
+\renewcommand\lstlistlistingname{Lista de Excertos de Código}
+
+
+% Structure
 \begin{document}
 
-% \setcounter{page}{0}
 \pagenumbering{gobble}
 
 % Cover
@@ -115,50 +169,30 @@
 % Author's Biography
 \subfile{author_biography.tex}
 
-% Blank page
-\subfile{blank_page.tex}
-
 % Abstract
 \subfile{abstract.tex}
-
-% Blank page
-\subfile{blank_page.tex}
-
-% Initialization of minitoc
-\dominitoc
-\mtcsettitle{minitoc}{}
-\mtcsetoffset{minitoc}{-1.0em}
-\renewcommand{\mtifont}{\large\sffamily}
-\renewcommand{\mtcfont}{\small\sffamily}
-\renewcommand{\mtcSfont}{\small\sffamily}
-\renewcommand{\mtcSSfont}{\small\sffamily}
-\renewcommand{\mtcSSSfont}{\small\sffamily}
 
 % Table of contents
 \tableofcontents
 \newpage
 
-% Blank page
-\subfile{blank_page.tex}
-
 % List of figures
 \listoffigures
 \newpage
 
-% Blank page
-\subfile{blank_page.tex}
+% List of tables
+\listoftables
+\newpage
+
+% List of listings
+\lstlistoflistings
+\newpage
 
 % Glossary
 \printnoidxglossary
-\adjustmtc
-\newpage
-
-% Blank page
-\subfile{blank_page.tex}
 
 % Abbreviations
 \printnoidxglossary[type=\acronymtype, title={Abreviaturas}]
-\adjustmtc
 \newpage
 
 % Blank page
@@ -181,17 +215,16 @@
 % Chapter 5
 \subfile{chapt_5.tex}
 
+% Chapter 6
+\subfile{chapt_6.tex}
+
 % Blank page
 \subfile{blank_page.tex}
 
 % References
-\subfile{libs/references.tex}
-% \chapter*{References}
-% \printbibliography[title={References}]
-% \newpage
-
-% Blank page
-% \subfile{blank_page.tex}
+\renewcommand{\bibname}{Referências}
+\bibliographystyle{ieeetr}
+\bibliography{libs/references}
 
 % Appendices
 % \subfile{appendices.tex}

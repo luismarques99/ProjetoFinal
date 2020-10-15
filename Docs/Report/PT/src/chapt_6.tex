@@ -1,0 +1,39 @@
+\documentclass[\main.tex]{subfiles}
+
+\chapter{Conclusão}
+
+\section{Reflexão Crítica dos Resultados}
+A solução desenvolvida é adequada às necessidades requeridas pelo projeto. Em relação aos
+resultados, existem sempre bastantes problemas com alguns modelos, visto que falham imenso
+por falta de convergência de alguns pontos. Na duração do projeto foi utilizada uma
+biblioteca, que no momento se encontra descontinuada 
+(\textit{\say{statsmodels.tsa.arima\_model.ARIMA}}), todavia já não era possível fazer a
+migração para a nova versão pela incompatibilidade com o \textit{\gls{google colab}}.
+Foi exprimentada a nova biblioteca localmente e alguns dos modelos que anteriormente não
+obtinham resultados por falta de convergência de pontos, nesta biblioteca já conseguiam
+ter sucesso nas previsões.\par
+Abordando os modelos de séries temporais estudadas, existem bastante utilidade nas
+possíveis previsões a realizar com os mesmos, visto que, é possível prever dados
+importantíssimos que normalmente utilizamos (ou seria vantajoso se o fizéssemos) como a
+velocidade média numa certa estrada ou o tráfego de uma estrada a certas horas do dia.\par
+Debatendo sobre o segundo \textit{\gls{dataset}} estudado, as previsões a realizar nesta
+altura que estamos a viver com a \gls{covid}, seria bastante interessante ter estimativas
+da ocupação de certos espaços com base em dados anteriores e poderia oferecer uma ajuda
+enorme no assunto.
+
+\section{Conclusão e Trabalho Futuro}
+No futuro, uma implementação essêncial seria a utilização da biblioteca na sua versão mais
+recente, para que mais modelos possam terminar com sucesso e, desse modo, conseguir
+melhores previsões e mais precisas.\par
+Em relação à incompatibilidade do \textit{\gls{google colab}} com esta biblioteca poderia
+ser contorado com o desenvolvimento de uma \textit{\acrshort{api}} e implementação do
+ambiente virtual de \textit{\gls{python}} num servidor, com a versão da linguagem
+utilizada neste projeto e as dependências necessárias para a nova versão da biblioteca.
+Ao servir essa \textit{\acrshort{api}} com esse servidor, teriamos uma plataforma de
+testes completamente funcional e com as bibliotecas necessárias mais atuais para um maior
+sucesso na execução dos algoritmos.\par
+Em suma, o trabalho foi concluído com sucesso e, na opinião do autor, as ferramentas
+trabalhadas podem vir a ser bastante úteis futuramente. O autor também espera concluir
+o trabalho futuro discutido para que o projeto fique cada vez mais único e útil.
+
+\newpage

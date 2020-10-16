@@ -26,6 +26,7 @@ os.chdir(PATH)
 from src.utils.csv_writer import CSVWriter
 
 timestamp = datetime.now().strftime("%Y.%m.%d.%H.%M.%S")
+DATASETS_FOLDER = "datasets"
 OUTPUT_FOLDER = os.path.join("results", f"{timestamp}_results_arima")
 results = list()
 logs = list()
@@ -37,6 +38,8 @@ class ArimaImprovedModel:
 
     Author: Luis Marques
     """
+
+    MODEL_NAME: str = "ARIMA"
 
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
                  num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
@@ -56,15 +59,15 @@ class ArimaImprovedModel:
         """
 
         self.series = series
+        self.variable_to_predict = variable_to_predict
         self.arima_parameters = arima_parameters
         self.title = title
-        self.data_split = 0
-        self.variable_to_predict = variable_to_predict
-        self._set_values()
         if predictions_size == 0.0:
             self.num_predictions = num_predictions
         else:
             self.num_predictions = int(len(self.values) * predictions_size)
+        self.data_split = 0
+        self._set_values()
         if num_splits == 0:
             self.train = self.values[:-self.num_predictions]
             self.test = self.values[-self.num_predictions:]
@@ -136,8 +139,16 @@ class ArimaImprovedModel:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
 
+    def _set_exog_values(self):
+        """Sets the values arrays to be used based on the series and the variable to predict. Also sets the exog
+        values to be used in the predictions."""
+        if hasattr(self, "exog_variables"):
+            self.exog_values = self.series.filter(items=self.exog_variables)
+            self.exog_values = self.exog_values.values
+
     def _set_values(self):
         """Sets the values to be used based on the series and the variable to predict"""
+        self._set_exog_values()
         self.scaler = MinMaxScaler()
         self.values = self.series[[self.variable_to_predict]]
         self.values[[self.variable_to_predict]] = self.scaler.fit_transform(self.values[[self.variable_to_predict]])
@@ -149,7 +160,7 @@ class ArimaImprovedModel:
         self.title = "".join(self.title.split())
         if self.title != "":
             self.name += f"{self.title}_"
-        self.name += "arima("
+        self.name += f"{self.MODEL_NAME}("
         for parameter in self.arima_parameters:
             self.name += f"{str(parameter)},"
         self.name = self.name[:-1] + ")_"
@@ -198,6 +209,8 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
 
     Author: Luis Marques
     """
+
+    MODEL_NAME = "ARIMAX"
 
     def __init__(self, series: DataFrame, variable_to_predict: str, exog_variables: tuple, arima_parameters: tuple,
                  title: str = "", num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
@@ -274,33 +287,14 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
 
-    def _set_values(self):
-        """Sets the values arrays to be used based on the series and the variable to predict. Also sets the exog
-        values to be used in the predictions."""
-        self.exog_values = self.series.filter(items=self.exog_variables)
-        self.exog_values = self.exog_values.values
-        super()._set_values()
-
-    def _set_name(self):
-        """Sets the name of the model according to its variables"""
-        self.name = ""
-        self.title = "".join(self.title.split())
-        if self.title != "":
-            self.name += f"{self.title}_"
-        self.name += "arimax("
-        for parameter in self.arima_parameters:
-            self.name += f"{str(parameter)},"
-        self.name = self.name[:-1] + ")_"
-        self.name += f"predictions_{str(self.num_predictions)}"
-        if self.data_split != 0:
-            self.name += f"_crossvalidation_{self.data_split}"
-
 
 class SarimaImprovedModel(ArimaImprovedModel):
     """Class that represents the structure of a SARIMA improved model
 
     Author: Luis Marques
     """
+
+    MODEL_NAME = "SARIMA"
 
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, season_parameters: tuple,
                  title: str = "", num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
@@ -374,29 +368,14 @@ class SarimaImprovedModel(ArimaImprovedModel):
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
 
-    def _set_name(self):
-        """Sets the name of the model according to its variables"""
-        self.name = ""
-        self.title = "".join(self.title.split())
-        if self.title != "":
-            self.name += f"{self.title}_"
-        self.name += "sarima("
-        for parameter in self.arima_parameters:
-            self.name += f"{str(parameter)},"
-        self.name = self.name[:-1] + ")("
-        for parameter in self.season_parameters:
-            self.name += f"{str(parameter)},"
-        self.name = self.name[:-1] + ")_"
-        self.name += f"predictions_{str(self.num_predictions)}"
-        if self.data_split != 0:
-            self.name += f"_crossvalidation_{self.data_split}"
-
 
 class SarimaMultivariateImprovedModel(ArimaImprovedModel):
     """Class that represents the structure of a SARIMA multivariate improved model
 
     Author: Luis Marques
     """
+
+    MODEL_NAME = "SARIMAX"
 
     def __init__(self, series: DataFrame, variable_to_predict: str, exog_variables: tuple, arima_parameters: tuple,
                  season_parameters: tuple, title: str = "", num_splits: int = 0, num_predictions: int = 10,
@@ -477,30 +456,6 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
         finally:
             results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
             print(f"Model {self.name} finished.")
-
-    def _set_values(self):
-        """Sets the values arrays to be used based on the series and the variable to predict. Also sets the exog
-        values to be used in the predictions."""
-        self.exog_values = self.series.filter(items=self.exog_variables)
-        self.exog_values = self.exog_values.values
-        super()._set_values()
-
-    def _set_name(self):
-        """Sets the name of the model according to its variables"""
-        self.name = ""
-        self.title = "".join(self.title.split())
-        if self.title != "":
-            self.name += f"{self.title}_"
-        self.name += "sarimax("
-        for parameter in self.arima_parameters:
-            self.name += f"{str(parameter)},"
-        self.name = self.name[:-1] + ")("
-        for parameter in self.season_parameters:
-            self.name += f"{str(parameter)},"
-        self.name = self.name[:-1] + ")_"
-        self.name += f"predictions_{str(self.num_predictions)}"
-        if self.data_split != 0:
-            self.name += f"_crossvalidation_{self.data_split}"
 
 
 # Functions
@@ -620,16 +575,15 @@ def run_models(dataset_name: str, models: list, variable_to_predict: str, title:
 
 
 def _dataset_to_series(filename: str, date_parser=None):
-    """Searches FILES_FOLDER for a dataset and returns it into a DataFrame object. If it is needed to parse the dates,
-    a function should be passed as the "date_parser" argument.
+    """Searches DATASETS_FOLDER for a dataset and returns it into a DataFrame object. If it is needed to parse the
+    dates, a function should be passed as the "date_parser" argument.
 
     Args:
-        filename (str): name of the .csv file containing the dataset. This file should be in the FILES_FOLDER.
+        filename (str): name of the .csv file containing the dataset. This file should be in the DATASETS_FOLDER.
         date_parser (optional): function to parse the dates of the dataset if needed. The function should return a
             datetime.
     """
-    FILES_FOLDER = "datasets"
-    file_path = os.path.join(FILES_FOLDER, filename)
+    file_path = os.path.join(DATASETS_FOLDER, filename)
     series = DataFrame()
     try:
         series = read_csv(file_path, header=0, index_col=0, parse_dates=[0], infer_datetime_format=True,

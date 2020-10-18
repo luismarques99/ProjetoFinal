@@ -163,6 +163,10 @@ class ArimaImprovedModel:
         self.name += f"{self.MODEL_NAME}("
         for parameter in self.arima_parameters:
             self.name += f"{str(parameter)},"
+        if hasattr(self, "season_parameters"):
+            self.name = self.name[:-1] + ")("
+            for parameter in self.season_parameters:
+                self.name += f"{str(parameter)},"
         self.name = self.name[:-1] + ")_"
         self.name += f"predictions_{str(self.num_predictions)}"
         if self.data_split != 0:
@@ -243,12 +247,15 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             # model = ARIMA(endog=self.history, order=self.arima_parameters, exog=history_extra)
             # model_fit = model.fit(disp=0)
             # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
-
+            # TODO: Corrigir deep copies
             # Make each forecast individually
             predictions = list()
+            history_extra = [x.copy() for x in self.exog_values[:len(self.history)]]
+            test_extra = [x.copy() for x in self.exog_values[-len(self.test)]]
             for timestep in range(self.num_predictions):
-                history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
-                test_extra = tuple(self.exog_values[-len(self.test) + timestep])
+                # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
+                # test_extra = tuple(self.exog_values[-len(self.test) + timestep])
+                # test_extra.append()
                 model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
                 model_fit = model.fit(disp=0)
                 output = model_fit.forecast(exog=test_extra)
@@ -256,6 +263,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
                 predictions.append(prediction)
                 obs = self.test[timestep]
                 self.history.append(obs)
+                history_extra.append(obs)
 
             self.predictions = self.scaler.inverse_transform([predictions])[0]
             self.test = self.scaler.inverse_transform([self.test])[0]
@@ -484,9 +492,9 @@ def init():
     #             for s in (24, 168):
     #                 sarima_parameters.append((p, d, q, s))
 
-    sarima_parameters = [(1, 2, 0, 24), (1, 2, 0, 168)]
+    sarima_parameters = [(0, 0, 1, 24), (0, 0, 1, 168)]
 
-    exog_variables = ("temp", "heating degree", "cooling degree")
+    exog_variables = ("heating degree", "cooling degree")
 
     models = [
         {

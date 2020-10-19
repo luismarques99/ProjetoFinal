@@ -247,15 +247,12 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             # model = ARIMA(endog=self.history, order=self.arima_parameters, exog=history_extra)
             # model_fit = model.fit(disp=0)
             # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
-            # TODO: Corrigir deep copies
+
             # Make each forecast individually
             predictions = list()
             history_extra = [x.copy() for x in self.exog_values[:len(self.history)]]
-            test_extra = [x.copy() for x in self.exog_values[-len(self.test)]]
             for timestep in range(self.num_predictions):
-                # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
-                # test_extra = tuple(self.exog_values[-len(self.test) + timestep])
-                # test_extra.append()
+                test_extra = tuple(self.exog_values[-self.num_predictions + timestep])
                 model = ARIMA(self.history, order=self.arima_parameters, exog=history_extra)
                 model_fit = model.fit(disp=0)
                 output = model_fit.forecast(exog=test_extra)
@@ -422,8 +419,8 @@ class SarimaMultivariateImprovedModel(ArimaImprovedModel):
 
             # Make each forecast individually
             predictions = list()
+            history_extra = [x.copy() for x in self.exog_values[:len(self.history)]]
             for timestep in range(self.num_predictions):
-                history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
                 test_extra = tuple(self.exog_values[-len(self.test) + timestep])
                 model = SARIMAX(self.history, exog=history_extra, order=self.arima_parameters,
                                 seasonal_order=self.season_parameters, enforce_stationarity=False,

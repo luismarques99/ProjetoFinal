@@ -536,11 +536,11 @@ def init():
         #     "arima_parameters": arima_parameters,
         #     "exog_variables": exog_variables
         # },
-        {
-            "model": SarimaImprovedModel,
-            "arima_parameters": arima_parameters,
-            "season_parameters": sarima_parameters
-        },
+        # {
+        #     "model": SarimaImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "season_parameters": sarima_parameters
+        # },
         # {
         #     "model": SarimaMultivariateImprovedModel,
         #     "arima_parameters": arima_parameters,

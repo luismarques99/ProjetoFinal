@@ -15,20 +15,20 @@ Para a realização deste projeto, foram definidos alguns objetivos principais, 
 parte deles contêm subobjetivos. Com a finalidade de manter uma boa coesão e garantia de
 qualidade do projeto, foram definidas as seguintes necessidades:
 \begin{itemize}
-    \item Estudo de modelos de séries temporais - visto que o projeto se trata da análise de
-    algoritmo de aprendizagem com base em séries temporais, estes dados também têm que ser
+    \item Estudar séries temporais - visto que o projeto se trata da análise de
+    algoritmo de aprendizagem com base em séries temporais, estes dados devem também ser
     estudados e compreendidos de modo obter uma melhor assimilação do comportamento dos
     modelos e dos resultados obtidos;
-    \item Encontro de melhores modelos para os \textit{\glspl{dataset}} pretendidos - de modo
-    a concretizar este objetivo, é necessário o estudo de alguns métodos específicos,
-    nomeadamente a pesquisa em grelha (\textit{\gls{grid search}});
-    \item Estudo de vários algoritmos de aprendizagem: \textit{\acrshort{arima}},
+    \item Estudar vários algoritmos de aprendizagem, entre eles, \textit{\acrshort{arima}},
     \textit{\acrshort{arimax}}, \textit{\acrshort{sarima}} e \textit{\acrshort{sarimax}}.
     Cada modelo deve ser estudado e compreendido de forma parametrizada para que a integração
     com qualquer conjunto de dados não cause nenhum problema;
-    \item Desenvolvimento de uma plataforma de testes de modelos de séries temporais com os 
-    algoritmos de aprendizagem estudados.
-    \item Integração dos \textit{\glspl{script}} com o \textit{\gls{google colab}}.
+    \item Desenvolver uma plataforma de testes de modelos de séries temporais com os 
+    algoritmos de aprendizagem estudados;
+    \item Encontrar melhores modelos para os casos estudados e os respetivos
+    \textit{\glspl{dataset}} - de modo a concretizar este objetivo, é necessário o estudo de
+    alguns métodos específicos, nomeadamente a pesquisa em grelha (\textit{\gls{grid search}});
+    \item Adaptar \textit{\glspl{script}} para correr em ambiente do \textit{\gls{google colab}}.
 \end{itemize}
 
 \section{Resultados}
@@ -38,38 +38,24 @@ modelos de séries temporais. A plataforma deve conseguir testar vários algorit
 executar todos os modelos com todas as configurações para descobrir melhores configurações
 para um determinado \textit{\gls{dataset}}.\par
 Para que a plataforma funcione sem qualquer tipo de falhas, todo o código desenvolvido deverá
-ser adaptado para ser executado em ambiente de \textit{\gls{google colab}}., de modo a
+ser adaptado para ser executado em ambiente de \textit{\gls{google colab}}, de modo a
 facilitar a manutenção do ambiente de trabalho e a fim de garantir um bom desempenho da
 máquina no decorrer dos testes.\par
-
-% \vspace{10pt}
-
-% \begin{lstlisting}[language=Python, caption=Função de transformação de datas]
-% def parser(x: int):
-%     return datetime.strptime(f"190{x}", "%Y-%m")
-% \end{lstlisting}
-
-% \begin{lstlisting}[language=Python, caption=Função de transformação de datas]
-% def parser(x):
-%     return datetime.strptime(x, "%d/%m/%Y")
-% \end{lstlisting}\par
 
 
 
 \section{Estrutura}
-O presente documento está dividido em 5 capítulo principais:
+O presente documento está dividido em 6 capítulo principais:
 \begin{enumerate}
     \item Contextualização e Motivação - este capítulo pretende apresentar de forma sucinta
-    e objetiva as circunstâncias a que surgiu o projeto, contendo o contexto, objetivos e
-    resultados do mesmo. Neste capítulo está contida ainda uma parte destinada à fundamentação
-    teórica do projeto, dando a conhecer, de uma forma um pouco abrangente, os principais
-    tópicos.
-    \item Concetualização do Problema - nesta secção estão detalhados os aspetos mais técnicos
-    do problema, visto que contém a definição dos requisitos e a definição de uma arquitetura
-    concetual.
+    e objetiva as circunstâncias que fizeram surgir o projeto, contendo o contexto, objetivos e
+    resultados do mesmo.
+    \item Fundamentação Teórica - neste capítulo são abrangidos, de uma forma teórica, os
+    principais tópicos do projeto. Dá-se também a conhecer as tecnologias utilizadas.
+    \item Concetualização do Problema - nesta secção estão detalhados os requisitos do trabalho.
     \item Metodologia de Operacionalização do Trabalho - neste capítulo é explorada e a
-    metodologia de trabalho utilizada. Contém também, no final, uma descrição sobre aspetos
-    mais técnicos do projeto.
+    metodologia de trabalho utilizada e a arquitetura concetual. Contém, também, como foi
+    desenvolvido o projeto e apresenta a plataforma \textit{\gls{google colab}}.
     \item Discussão dos Resultados - é nesta secção que serão discutidos os resultados
     obtidos e a explicação de possíveis controversias.
     \item Conclusão - este capítulo visa realizar uma conclusão global do projeto e, por fim,

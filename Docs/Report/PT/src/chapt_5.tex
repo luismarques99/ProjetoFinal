@@ -8,7 +8,7 @@ resultados e contextos diferentes. O primeiro \textit{\gls{dataset}} aborda a di
 velocidades instantâneas numa estrada, enquanto que o segundo estuda a quantidade
 populacional num determinado local.
 
-\subsection{\textit{Dataset} de Velocidades Instantâneas}
+\subsection{Caso de Estudo das Velocidades Instantâneas}
 Este conjunto de dados é de uma rua na cidade de Braga e foi calculada a diferença de
 velocidades instantâneas no início e no fim da rua. Podem ser apontadas algumas vantagens
 no estudo deste \textit{\gls{dataset}} como: previsão das horas mais sossegadas numa estrada
@@ -115,103 +115,168 @@ Representado na tabela 5.4 e na figura 5.2;\\
 Representado na tabela 5.5 e na figura 5.3;\\[10pt]
 
 \newpage
-\begin{table}[h!]
-\centering
-\setlength{\extrarowheight}{4pt}
-\setlength{\tabcolsep}{10pt}
-\begin{tabular}{|c|c|c|c|c|c|}
-\hline
-\textbf{"Predict"} & \textbf{"speed\_diff"}\\[4pt]
-\hline
-0.13817744331334328 & 0.0 \\[4pt]
-\thinhline
--0.8973439961623095&7.66666666666 6 668 \\[4pt]
-\thinhline
-7.323374989923932&13.66666666666 6 664 \\[4pt]
-\thinhline
-11.038172786531765 & 0.0 \\[4pt]
-\thinhline
-2.103461054155741 & 3.0 \\[4pt]
-\thinhline
-2.091510219928224 & 3.0 \\[4pt]
-\thinhline
-3.208279408032984&3.33333333333 3 333 \\[4pt]
-\thinhline
-2.283585816926894&3.666666666666 6 665 \\[4pt]
-\thinhline
-3.9253583100976295& 1 0.0 \\[4pt]
-\thinhline
-8.34553662378711 & 0.0 \\[4pt]
-\thinhline
-1.5898776295568244 & 4.0 \\[4pt]
-\thinhline
-2.7362308186284343 & 0.0 \\[4pt]
-\thinhline
-0.3293245341001239 & 0.0 \\[4pt]
-\thinhline
--0.8090669648652083 & 0.0 \\[4pt]
-\thinhline
-0.4107963416104033 & 0.0 \\[4pt]
-\hline
-\end{tabular}
-\caption{Previsões do modelo \textit{\acrshort{arimax}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
-\end{table}
 
 \begin{figure}[h!]
-\centering
-\includegraphics[width=0.9\linewidth]{../private_assets/plot_SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_1.png}
-\caption{Gráfico do modelo \textit{\acrshort{arimax}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
+\begin{floatrow}
+\capbtabbox{%
+  \begin{tabular}{|c|c|} \hline
+    \textbf{"Predict"} & \textbf{"speed\_diff"} \\ \hline
+    0.13817744331334328 & 0.0 \\ \thinhline
+    -0.8973439961623095 & 7.66666666666 6 668 \\ \thinhline
+    7.323374989923932 & 13.66666666666 6 664 \\ \thinhline
+    11.038172786531765 & 0.0 \\ \thinhline
+    2.103461054155741 & 3.0 \\ \thinhline
+    2.091510219928224 & 3.0 \\ \thinhline
+    3.208279408032984 & 3.33333333333 3 333 \\ \thinhline
+    2.283585816926894 & 3.666666666666 6 665 \\ \thinhline
+    3.9253583100976295 & 1 0.0 \\ \thinhline
+    8.34553662378711 & 0.0 \\ \thinhline
+    1.5898776295568244 & 4.0 \\ \thinhline
+    2.7362308186284343 & 0.0 \\ \thinhline
+    0.3293245341001239 & 0.0 \\ \thinhline
+    -0.8090669648652083 & 0.0 \\ \thinhline
+    0.4107963416104033 & 0.0 \\ \hline
+  \end{tabular}
+}{%
+  \caption{Previsões do modelo \textit{\acrshort{arimax}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}%
+}
+\ffigbox{%
+\includegraphics[width=\linewidth]{../private_assets/plot_SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_1.png}
+}{%
+  \caption{Gráfico do modelo \textit{\acrshort{arimax}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}%
+}
+\end{floatrow}
 \end{figure}
 
+% \begin{table}[h!]
+% \centering
+% \setlength{\extrarowheight}{4pt}
+% \setlength{\tabcolsep}{10pt}
+% \begin{tabular}{|c|c|}
+% \hline
+% \textbf{"Predict"} & \textbf{"speed\_diff"}\\[4pt]
+% \hline
+% 0.13817744331334328 & 0.0 \\[4pt]
+% \thinhline
+% -0.8973439961623095&7.66666666666 6 668 \\[4pt]
+% \thinhline
+% 7.323374989923932&13.66666666666 6 664 \\[4pt]
+% \thinhline
+% 11.038172786531765 & 0.0 \\[4pt]
+% \thinhline
+% 2.103461054155741 & 3.0 \\[4pt]
+% \thinhline
+% 2.091510219928224 & 3.0 \\[4pt]
+% \thinhline
+% 3.208279408032984&3.33333333333 3 333 \\[4pt]
+% \thinhline
+% 2.283585816926894&3.666666666666 6 665 \\[4pt]
+% \thinhline
+% 3.9253583100976295& 1 0.0 \\[4pt]
+% \thinhline
+% 8.34553662378711 & 0.0 \\[4pt]
+% \thinhline
+% 1.5898776295568244 & 4.0 \\[4pt]
+% \thinhline
+% 2.7362308186284343 & 0.0 \\[4pt]
+% \thinhline
+% 0.3293245341001239 & 0.0 \\[4pt]
+% \thinhline
+% -0.8090669648652083 & 0.0 \\[4pt]
+% \thinhline
+% 0.4107963416104033 & 0.0 \\[4pt]
+% \hline
+% \end{tabular}
+% \caption{Previsões do modelo \textit{\acrshort{arimax}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
+% \end{table}
+% 
+% \begin{figure}[h!]
+% \centering
+% \includegraphics[width=0.9\linewidth]{../private_assets/plot_SpeedDiff_arimax(1,2,3)_predictions_15_crossvalidation_1.png}
+% \caption{Gráfico do modelo \textit{\acrshort{arimax}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
+% \end{figure}
 
-\newpage
-\begin{table}[h!]
-\centering
-\setlength{\extrarowheight}{4pt}
-\setlength{\tabcolsep}{10pt}
-\begin{tabular}{|c|c|c|c|c|c|}
-\hline
-\textbf{"Predict"} & \textbf{"speed\_diff"}\\[4pt]
-\hline
-0.34030661913252236 & 0.0 \\[4pt]
-\thinhline
--0.7087282570616925 & 7.666666666666668 \\[4pt]
-\thinhline
-6.955187335970128 & 13.666666666666664 \\[4pt]
-\thinhline
-12.210641102705337 & 0.0 \\[4pt]
-\thinhline
-2.2518274963409595 & 3.0 \\[4pt]
-\thinhline
-2.236290006499467 & 3.0 \\[4pt]
-\thinhline
-3.3883287072845674 & 3.333333333333333 \\[4pt]
-\thinhline
-2.597318025226484 & 3.6666666666666665 \\[4pt]
-\thinhline
-4.030597662527793 & 10.0 \\[4pt]
-\thinhline
-8.426346911548624 & 0.0 \\[4pt]
-\thinhline
-1.8303097185121766 & 4.0 \\[4pt]
-\thinhline
-2.7647857128428743 & 0.0 \\[4pt]
-\thinhline
-1.016524698044413 & 0.0 \\[4pt]
-\thinhline
--0.7501655819003638 & 0.0 \\[4pt]
-\thinhline
-0.29871343930839866 & 0.0 \\[4pt]
-\hline
-\end{tabular}
-\caption{Previsões do modelo \textit{\acrshort{arima}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
-\end{table}
 
 \begin{figure}[h!]
-\centering
-\includegraphics[width=0.9\linewidth]{../private_assets/plot_SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_1.png}
-\caption{Gráfico do modelo \textit{\acrshort{arima}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
+\begin{floatrow}
+\capbtabbox{%
+  \begin{tabular}{|c|c|} \hline
+    \textbf{"Predict"} & \textbf{"speed\_diff"} \\ \hline
+    0.34030661913252236 & 0.0 \\ \thinhline
+    -0.7087282570616925 & 7.666666666666668 \\ \thinhline
+    6.955187335970128 & 13.666666666666664 \\ \thinhline
+    12.210641102705337 & 0.0 \\ \thinhline
+    2.2518274963409595 & 3.0 \\ \thinhline
+    2.236290006499467 & 3.0 \\ \thinhline
+    3.3883287072845674 & 3.333333333333333 \\ \thinhline
+    2.597318025226484 & 3.6666666666666665 \\ \thinhline
+    4.030597662527793 & 10.0 \\ \thinhline
+    8.426346911548624 & 0.0 \\ \thinhline
+    1.8303097185121766 & 4.0 \\ \thinhline
+    2.7647857128428743 & 0.0 \\ \thinhline
+    1.016524698044413 & 0.0 \\ \thinhline
+    -0.7501655819003638 & 0.0 \\ \thinhline
+    0.29871343930839866 & 0.0 \\ \hline
+  \end{tabular}
+}{%
+  \caption{Previsões do modelo \textit{\acrshort{arima}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}%
+}
+\ffigbox{%
+\includegraphics[width=\linewidth]{../private_assets/plot_SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_1.png}
+}{%
+  \caption{Gráfico do modelo \textit{\acrshort{arima}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}%
+}
+\end{floatrow}
 \end{figure}
+
+% \newpage
+% \begin{table}[h!]
+% \centering
+% \setlength{\extrarowheight}{4pt}
+% \setlength{\tabcolsep}{10pt}
+% \begin{tabular}{|c|c|}
+% \hline
+% \textbf{"Predict"} & \textbf{"speed\_diff"}\\[4pt]
+% \hline
+% 0.34030661913252236 & 0.0 \\[4pt]
+% \thinhline
+% -0.7087282570616925 & 7.666666666666668 \\[4pt]
+% \thinhline
+% 6.955187335970128 & 13.666666666666664 \\[4pt]
+% \thinhline
+% 12.210641102705337 & 0.0 \\[4pt]
+% \thinhline
+% 2.2518274963409595 & 3.0 \\[4pt]
+% \thinhline
+% 2.236290006499467 & 3.0 \\[4pt]
+% \thinhline
+% 3.3883287072845674 & 3.333333333333333 \\[4pt]
+% \thinhline
+% 2.597318025226484 & 3.6666666666666665 \\[4pt]
+% \thinhline
+% 4.030597662527793 & 10.0 \\[4pt]
+% \thinhline
+% 8.426346911548624 & 0.0 \\[4pt]
+% \thinhline
+% 1.8303097185121766 & 4.0 \\[4pt]
+% \thinhline
+% 2.7647857128428743 & 0.0 \\[4pt]
+% \thinhline
+% 1.016524698044413 & 0.0 \\[4pt]
+% \thinhline
+% -0.7501655819003638 & 0.0 \\[4pt]
+% \thinhline
+% 0.29871343930839866 & 0.0 \\[4pt]
+% \hline
+% \end{tabular}
+% \caption{Previsões do modelo \textit{\acrshort{arima}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
+% \end{table}
+
+% \begin{figure}[h!]
+% \centering
+% \includegraphics[width=0.9\linewidth]{../private_assets/plot_SpeedDiff_arima(1,2,3)_predictions_15_crossvalidation_1.png}
+% \caption{Gráfico do modelo \textit{\acrshort{arima}}(1, 2, 3), 1ª divisão do dataset, com 15 previsões}
+% \end{figure}
 
 
 \newpage
@@ -273,7 +338,7 @@ A pior será a hora correspondente à previsão número 3, 11, 12, 13 e 14. Anal
 haver tanto tráfego automóvel, isto é, conclui-se que a pior hora será às 13 horas.
 
 \newpage
-\subsection{\textit{Dataset} de Quantidade Populacional}
+\subsection{Caso de Estudo da Quantidade Populacional}
 Por outro lado, este conjunto te dados trata-se das medições da quantidade populacional num
 quiosque em Nova Iorque. Podem ser apontadas vantagens como: previsão da quantidade de
 pessoas num determinado local, o que pode ser uma excelente forma de prevenção da doença

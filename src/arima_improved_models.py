@@ -522,25 +522,25 @@ def init():
     #             for s in (24, 168):
     #                 sarima_parameters.append((p, d, q, s))
 
-    sarima_parameters = [(0, 1, 1, 24), (0, 1, 1, 48)]
+    sarima_parameters = [(0, 0, 1, 24), (0, 1, 1, 24)]
 
     exog_variables = ("temp", "ac_temperatures")
 
     models = [
-        # {
-        #     "model": ArimaImprovedModel,
-        #     "arima_parameters": arima_parameters
-        # },
         {
-            "model": ArimaMultivariateImprovedModel,
-            "arima_parameters": arima_parameters,
-            "exog_variables": exog_variables
+            "model": ArimaImprovedModel,
+            "arima_parameters": arima_parameters
         },
         # {
-        #     "model": SarimaImprovedModel,
+        #     "model": ArimaMultivariateImprovedModel,
         #     "arima_parameters": arima_parameters,
-        #     "season_parameters": sarima_parameters
+        #     "exog_variables": exog_variables
         # },
+        {
+            "model": SarimaImprovedModel,
+            "arima_parameters": arima_parameters,
+            "season_parameters": sarima_parameters
+        },
         # {
         #     "model": SarimaMultivariateImprovedModel,
         #     "arima_parameters": arima_parameters,

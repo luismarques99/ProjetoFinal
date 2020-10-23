@@ -1,0 +1,12 @@
+LOG: Model Census_ARIMAX(1,2,0)_predictions_20_crossvalidation_1 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(1,2,0)_predictions_20_crossvalidation_2 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(1,2,0)_predictions_20_crossvalidation_3 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(3,2,0)_predictions_20_crossvalidation_1 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(3,2,0)_predictions_20_crossvalidation_2 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(3,2,0)_predictions_20_crossvalidation_3 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(2,2,0)_predictions_20_crossvalidation_1 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(2,2,0)_predictions_20_crossvalidation_2 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(2,2,0)_predictions_20_crossvalidation_3 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(4,2,0)_predictions_20_crossvalidation_1 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(4,2,0)_predictions_20_crossvalidation_2 exported with an error! ValueError: new exog needed for each step
+LOG: Model Census_ARIMAX(4,2,0)_predictions_20_crossvalidation_3 exported with an error! ValueError: new exog needed for each step

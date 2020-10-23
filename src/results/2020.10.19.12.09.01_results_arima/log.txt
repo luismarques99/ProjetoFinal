@@ -1,0 +1,12 @@
+LOG: Model Census_ARIMA(1,2,0)_predictions_20_crossvalidation_1 exported with success.
+LOG: Model Census_ARIMA(1,2,0)_predictions_20_crossvalidation_2 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(1,2,0)_predictions_20_crossvalidation_3 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(3,2,0)_predictions_20_crossvalidation_1 exported with success.
+LOG: Model Census_ARIMA(3,2,0)_predictions_20_crossvalidation_2 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(3,2,0)_predictions_20_crossvalidation_3 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(2,2,0)_predictions_20_crossvalidation_1 exported with success.
+LOG: Model Census_ARIMA(2,2,0)_predictions_20_crossvalidation_2 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(2,2,0)_predictions_20_crossvalidation_3 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(4,2,0)_predictions_20_crossvalidation_1 exported with success.
+LOG: Model Census_ARIMA(4,2,0)_predictions_20_crossvalidation_2 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'
+LOG: Model Census_ARIMA(4,2,0)_predictions_20_crossvalidation_3 exported with an error! AttributeError: 'numpy.ndarray' object has no attribute 'append'

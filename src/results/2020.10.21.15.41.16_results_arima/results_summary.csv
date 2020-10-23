@@ -1,0 +1,13 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"Census_ARIMAX(1,2,0)_predictions_20_crossvalidation_1",-1,-1,-1,-1
+"Census_ARIMAX(1,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMAX(1,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMAX(3,2,0)_predictions_20_crossvalidation_1",-1,-1,-1,-1
+"Census_ARIMAX(3,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMAX(3,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMAX(2,2,0)_predictions_20_crossvalidation_1",-1,-1,-1,-1
+"Census_ARIMAX(2,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMAX(2,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMAX(4,2,0)_predictions_20_crossvalidation_1",-1,-1,-1,-1
+"Census_ARIMAX(4,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMAX(4,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1

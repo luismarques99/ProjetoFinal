@@ -1,0 +1,13 @@
+Model,Execution Time (sec),MAE,MSE,RMSE
+"Census_ARIMA(1,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMA(1,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMA(3,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMA(3,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMA(2,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMA(2,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMA(4,2,0)_predictions_20_crossvalidation_2",-1,-1,-1,-1
+"Census_ARIMA(4,2,0)_predictions_20_crossvalidation_3",-1,-1,-1,-1
+"Census_ARIMA(3,2,0)_predictions_20_crossvalidation_1",3.152461290359497,1162.8271691469295,2026472.3788126432,1423.5421942508917
+"Census_ARIMA(2,2,0)_predictions_20_crossvalidation_1",1.7005276679992676,1413.082612630586,2775308.84820241,1665.9258231393167
+"Census_ARIMA(4,2,0)_predictions_20_crossvalidation_1",5.153019666671753,1396.3071173969397,2872543.974481316,1694.858098626937
+"Census_ARIMA(1,2,0)_predictions_20_crossvalidation_1",1.5518500804901123,1982.637971605811,6485387.405967228,2546.64237889171

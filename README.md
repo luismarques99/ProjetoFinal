@@ -22,6 +22,10 @@ This project aims to make a **comparative analysis of machine learning algorithm
 - Pip 3
 - requirements.txt
 
+## Documents
+
+See all the documents in [`Docs`](Docs).
+
 ## Built with
 
 ### Documentation

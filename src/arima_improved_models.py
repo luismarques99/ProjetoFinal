@@ -33,17 +33,17 @@ logs = list()
 
 
 # Classes
-class ArimaImprovedModel:
-    """Class that represents the structure of an ARIMA improved model
+class GenericModel:
+    """Class that represents the structure of the Generic Model for the creation of specific models
 
     Author: Luis Marques
     """
 
-    MODEL_NAME: str = "ARIMA"
+    MODEL_NAME: str = "GENERIC"
 
     def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
                  num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
-        """Creates an instance of an ArimaImprovedModel.
+        """Creates an instance of an GenericModel.
 
         Args:
             series (DataFrame): series of the dataset to run the model.
@@ -68,6 +68,7 @@ class ArimaImprovedModel:
             self.num_predictions = int(len(self.values) * predictions_size)
         self.data_split = 0
         self._set_values()
+        self.predictions = list()
         if num_splits == 0:
             self.train = self.values[:-self.num_predictions]
             self.test = self.values[-self.num_predictions:]
@@ -83,61 +84,15 @@ class ArimaImprovedModel:
                 self.train = [*self.train, *self.test[:-self.num_predictions]]
                 self.test = self.test[-self.num_predictions:]
                 self.data_split += 1
-                self.history = [x for x in self.train]
+                self.history = [x.copy() for x in self.train]
                 self._set_name()
                 self._set_folder()
                 self._set_raw_file()
                 self._execute()
 
     def _execute(self):
-        """Executes the model"""
-        self.starting_time = time.time()
-        try:
-            # Predict using forecast method
-            # model = ARIMA(endog=self.history, order=self.arima_parameters)
-            # model_fit = model.fit(disp=0)
-            # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions)
-
-            # Make each forecast individually
-            predictions = list()
-            for timestep in range(self.num_predictions):
-                model = ARIMA(self.history, order=self.arima_parameters)
-                model_fit = model.fit(disp=0)
-                output = model_fit.forecast()
-                prediction = output[0][0]
-                predictions.append(prediction)
-                obs = self.test[timestep]
-                self.history.append(obs)
-
-            self.predictions = self.scaler.inverse_transform([predictions])[0]
-            self.test = self.scaler.inverse_transform([self.test])[0]
-
-            for timestep in range(self.num_predictions):
-                self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
-
-            self._export_plot()
-
-        except Exception as err:
-            logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
-            self.execution_time = -1
-            self.mae = -1
-            self.mse = -1
-            self.rmse = -1
-            # If it returns an error the model folder is removed
-            self.file.close()
-            shutil.rmtree(self.folder)
-
-        else:
-            logs.append(f"LOG: Model {self.name} exported with success.")
-            self.execution_time = time.time() - self.starting_time
-            self.mae = mean_absolute_error(self.test, self.predictions)
-            self.mse = mean_squared_error(self.test, self.predictions)
-            self.rmse = sqrt(self.mse)
-            self.file.close()
-
-        finally:
-            results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
-            print(f"Model {self.name} finished.")
+        """Executes the model. This method should be implemented in each individual model class"""
+        pass
 
     def _set_exog_values(self):
         """Sets the values arrays to be used based on the series and the variable to predict. Also sets the exog
@@ -208,8 +163,86 @@ class ArimaImprovedModel:
         pyplot.close()
 
 
-class ArimaMultivariateImprovedModel(ArimaImprovedModel):
-    """Class that represents the structure of an ARIMA multivariate improved model
+class ArimaImprovedModel(GenericModel):
+    """Class that represents the structure of an ARIMA improved model
+
+    Author: Luis Marques
+    """
+
+    MODEL_NAME: str = "ARIMA"
+
+    def __init__(self, series: DataFrame, variable_to_predict: str, arima_parameters: tuple, title: str = "",
+                 num_splits: int = 0, num_predictions: int = 10, predictions_size: float = 0.0):
+        """Creates an instance of an ArimaImprovedModel.
+
+        Args:
+            series (DataFrame): series of the dataset to run the model.
+            variable_to_predict (str): name of the variable to predict. It must be the same name of the column in the
+                dataset.
+            arima_parameters (tuple): parameters of the arima model.
+            title (str): title of the model. Used to differentiate this model from other ones with the same parameters.
+                Defaults to "".
+            num_splits (int): number of splits to do in the dataset. Defaults to 0.
+            num_predictions (int): number of predictions of the model. Defaults to 10. It will only have effect if the
+                predictions_size is equal to zero.
+            predictions_size (float): percentage of data to predict (from 0 to 1). Defaults to 0.
+        """
+        super().__init__(series, variable_to_predict, arima_parameters, title, num_splits, num_predictions,
+                         predictions_size)
+
+    def _execute(self):
+        """Executes the model"""
+        self.starting_time = time.time()
+        try:
+            # Predict using forecast method
+            # model = ARIMA(endog=self.history, order=self.arima_parameters)
+            # model_fit = model.fit(disp=0)
+            # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions)
+
+            # Make each forecast individually
+            predictions = list()
+            for timestep in range(self.num_predictions):
+                model = ARIMA(self.history, order=self.arima_parameters)
+                model_fit = model.fit(disp=0)
+                output = model_fit.forecast()
+                prediction = output[0][0]
+                predictions.append(prediction)
+                obs = self.test[timestep]
+                self.history.append(obs)
+
+            self.predictions = self.scaler.inverse_transform([predictions])[0]
+            self.test = self.scaler.inverse_transform([self.test])[0]
+
+            for timestep in range(self.num_predictions):
+                self.file.write_line((str(self.predictions[timestep]), str(self.test[timestep])))
+
+            self._export_plot()
+
+        except Exception as err:
+            logs.append(f"LOG: Model {self.name} exported with an error! {type(err).__name__}: {err}")
+            self.execution_time = -1
+            self.mae = -1
+            self.mse = -1
+            self.rmse = -1
+            # If it returns an error the model folder is removed
+            self.file.close()
+            shutil.rmtree(self.folder)
+
+        else:
+            logs.append(f"LOG: Model {self.name} exported with success.")
+            self.execution_time = time.time() - self.starting_time
+            self.mae = mean_absolute_error(self.test, self.predictions)
+            self.mse = mean_squared_error(self.test, self.predictions)
+            self.rmse = sqrt(self.mse)
+            self.file.close()
+
+        finally:
+            results.append((f'"{self.name}"', str(self.execution_time), str(self.mae), str(self.mse), str(self.rmse)))
+            print(f"Model {self.name} finished.")
+
+
+class ArimaMultivariateImprovedModel(GenericModel):
+    """Class that represents the structure of an ARIMAX improved model
 
     Author: Luis Marques
     """
@@ -242,8 +275,8 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
         self.starting_time = time.time()
         try:
             # Predict using forecast method
-            # history_extra = tuple([x for x in self.exog_values[:len(self.history)]])
-            # test_extra = tuple([x for x in self.exog_values[-len(self.test):]])
+            # history_extra = tuple([x.copy() for x in self.exog_values[:len(self.history)]])
+            # test_extra = tuple([x.copy() for x in self.exog_values[-len(self.test):]])
             # model = ARIMA(endog=self.history, order=self.arima_parameters, exog=history_extra)
             # model_fit = model.fit(disp=0)
             # predictions, stderr, conf_int = model_fit.forecast(steps=self.num_predictions, exog=test_extra)
@@ -293,7 +326,7 @@ class ArimaMultivariateImprovedModel(ArimaImprovedModel):
             print(f"Model {self.name} finished.")
 
 
-class SarimaImprovedModel(ArimaImprovedModel):
+class SarimaImprovedModel(GenericModel):
     """Class that represents the structure of a SARIMA improved model
 
     Author: Luis Marques
@@ -374,8 +407,8 @@ class SarimaImprovedModel(ArimaImprovedModel):
             print(f"Model {self.name} finished.")
 
 
-class SarimaMultivariateImprovedModel(ArimaImprovedModel):
-    """Class that represents the structure of a SARIMA multivariate improved model
+class SarimaMultivariateImprovedModel(GenericModel):
+    """Class that represents the structure of a SARIMAX improved model
 
     Author: Luis Marques
     """
@@ -489,31 +522,31 @@ def init():
     #             for s in (24, 168):
     #                 sarima_parameters.append((p, d, q, s))
 
-    sarima_parameters = [(0, 0, 1, 24), (0, 0, 1, 168)]
+    sarima_parameters = [(0, 1, 1, 24), (0, 1, 1, 48)]
 
-    exog_variables = ("heating degree", "cooling degree")
+    exog_variables = ("temp", "ac_temperatures")
 
     models = [
-        {
-            "model": ArimaImprovedModel,
-            "arima_parameters": arima_parameters
-        },
+        # {
+        #     "model": ArimaImprovedModel,
+        #     "arima_parameters": arima_parameters
+        # },
         {
             "model": ArimaMultivariateImprovedModel,
             "arima_parameters": arima_parameters,
             "exog_variables": exog_variables
         },
-        {
-            "model": SarimaImprovedModel,
-            "arima_parameters": arima_parameters,
-            "season_parameters": sarima_parameters
-        },
-        {
-            "model": SarimaMultivariateImprovedModel,
-            "arima_parameters": arima_parameters,
-            "exog_variables": exog_variables,
-            "season_parameters": sarima_parameters
-        }
+        # {
+        #     "model": SarimaImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "season_parameters": sarima_parameters
+        # },
+        # {
+        #     "model": SarimaMultivariateImprovedModel,
+        #     "arima_parameters": arima_parameters,
+        #     "exog_variables": exog_variables,
+        #     "season_parameters": sarima_parameters
+        # }
     ]
 
     num_predictions = 20

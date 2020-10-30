@@ -9,3 +9,7 @@
 ## Poster
 
 <kbd>[<img src="Poster.png" alt="Report" width="250"/>](Poster.pdf)</kbd>
+
+## Presentation
+
+<kbd>[<img src="Presentation/cover.png" alt="Report" width="250"/>](Presentation/Presentation.pdf)</kbd>

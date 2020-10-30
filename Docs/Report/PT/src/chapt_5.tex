@@ -373,13 +373,13 @@ Representado na tabela 5.5 e na figura 5.4;\\[10pt]
 % \end{figure}\par
 
 \vspace{1cm}
-Em suma, o modelo mais acertivo foi o modelo representado na tabela 5.1 e na figura 5.1.
+Em suma, o modelo mais acertivo foi o modelo representado na tabela 5.3 e na figura 5.2.
 Posto isto, podemos concluir que a melhor hora para passar na estrada será a hora com maior
-diferença de velocidades instantâneas, ou seja, a hora correspondente à previsão número 1.
-A pior será a hora correspondente à previsão número 3, 11, 12, 13 e 14. Analisando o
-\textit{\gls{dataset}}, podemos afirmar que a melhor hora será às 11 horas e a pior será
-às 13 horas e das 20 horas até às 23 horas. No entanto, nas horas noturnas é normal não
-haver tanto tráfego automóvel, isto é, conclui-se que a pior hora será às 13 horas.
+diferença de velocidades instantâneas, ou seja, a hora correspondente ao \textit{timestep} número 2.
+As piores serão as horas correspondentes aos \textit{timesteps} número 3, 9, e 11 a 14. Analisando o
+\textit{\gls{dataset}}, podemos afirmar que a melhor hora será às 12 horas e as piores serão
+às 13, às 18 e das 20 até às 23 horas. No entanto, nas horas noturnas é normal não
+haver tanto tráfego automóvel, isto é, conclui-se que as piores horas serão às 13 e às 18 horas.
 
 \newpage
 \subsection{Caso de Estudo da Quantidade Populacional}
@@ -393,7 +393,7 @@ realizar este caso de estudo.\par
 \centering
 \setlength{\extrarowheight}{5pt}
 \setlength{\tabcolsep}{10pt}
-\begin{tabular}{|c|c|c|c|c}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
 \textbf{"date"} & \textbf{"wifi status"} & \textbf{"temp"} & \textbf{"precipitation"} & \textbf{"census"} \\[5pt]
 \hline
@@ -791,12 +791,12 @@ Representado na tabela 5.10 e na figura 5.8;\\[10pt]
 
 \vspace{1cm}
 
-Em suma, o modelo mais acertivo foi o modelo representado na tabela 5.4 e na figura 5.4.
+Em suma, o modelo mais acertivo foi o modelo representado na tabela 5.8 e na figura 5.6.
 Posto isto, podemos concluir que o melhor dia do mês para ir ao quiosque será o dia com
 menor população e o pior dia será o dia com maior população. Ou seja, segundo o modelo
-da figura 5.4, o melhor dia é o da previsão 1 e o pior é o da previsão 20. Fazendo a
+da figura 5.4, o melhor dia é o do \textit{timesetp} número 1 e o pior é o \textit{timesetp} número 19. Fazendo a
 consulta ao \textit{\gls{dataset}}, podemos concluir que o melhor dia para ir seria no
-dia 13 e o pior seria no dia 31.
+dia 13 de cada mês e o pior seria no dia 31 (ou 30 para meses com apenas 30 dias).
 
 
 
